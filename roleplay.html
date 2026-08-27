@@ -398,7 +398,7 @@ function renderExercise(){
   const phase = currentPhase();
   const ps = session.phaseState[phase.id];
   const hitCount = phase.items.filter(it=>ps.hit[it.id]).length;
-  const ready = hitCount >= Math.ceil(phase.items.length*0.75) && !session.pendingObjection;
+  const ready = hitCount >= Math.ceil(phase.items.length*0.6) && !session.pendingObjection;
 
   app.innerHTML = `
     ${header(false)}
@@ -463,7 +463,7 @@ function clearSilenceTimer(){ if(silenceTimer){ clearTimeout(silenceTimer); sile
 if(SpeechRec){
   recognition = new SpeechRec();
   recognition.lang = 'es-ES';
-  recognition.interimResults = true;
+  recognition.interimResults = false;
   recognition.maxAlternatives = 1;
   recognition.onresult = e=>{
     const input = document.getElementById('textInput');
@@ -579,7 +579,7 @@ function handleCommercialTurn(rawText){
   addChatBubble('cliente', clientBubble, bubbleKind);
 
   const hitCount = phase.items.filter(it=>ps.hit[it.id]).length;
-  const ready = hitCount >= Math.ceil(phase.items.length*0.75) && !session.pendingObjection;
+  const ready = hitCount >= Math.ceil(phase.items.length*0.6) && !session.pendingObjection;
   if(ready){
     autoAdvanceTimer = setTimeout(()=>{ autoAdvanceTimer=null; advancePhase(); }, 700);
   } else {
