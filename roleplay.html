@@ -267,6 +267,10 @@ function cancelAutoListen(){ if(autoListenTimer){ clearTimeout(autoListenTimer);
 function scheduleAutoListen(){
   cancelAutoListen();
   if(!recognition) return;
+  if(window.speechSynthesis && speechSynthesis.speaking){
+    autoListenTimer = setTimeout(scheduleAutoListen, 150);
+    return;
+  }
   autoListenTimer = setTimeout(()=>{
     autoListenTimer = null;
     const micBtn = document.getElementById('micBtn');
@@ -275,7 +279,7 @@ function scheduleAutoListen(){
     input.value = '';
     micBtn.classList.add('listening');
     try{ recognition.start(); }catch(e){ micBtn.classList.remove('listening'); }
-  }, 1000);
+  }, 600);
 }
 
 const app = document.getElementById('app');
@@ -372,6 +376,21 @@ function currentPhase(){ return PHASES[session.currentPhaseIndex]; }
 
 function addChatBubble(who, text, kind){
   session.chat.push({who, text, kind: kind||'normal'});
+  if(who==='cliente') speak(text);
+}
+
+function speak(text){
+  if(!window.speechSynthesis) return;
+  try{
+    speechSynthesis.cancel();
+    const clean = text.replace(/^\(.*?\)\s*/, '');
+    const u = new SpeechSynthesisUtterance(clean);
+    u.lang = 'es-ES';
+    const voices = speechSynthesis.getVoices();
+    const esVoice = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('es'));
+    if(esVoice) u.voice = esVoice;
+    speechSynthesis.speak(u);
+  }catch(e){}
 }
 
 function renderExercise(){
@@ -455,6 +474,10 @@ if(SpeechRec){
     clearSilenceTimer();
     silenceTimer = setTimeout(()=>{ try{ recognition.stop(); }catch(e){} }, 1100);
   };
+  recognition.onstart = ()=>{
+    const hint = document.getElementById('micHint');
+    if(hint) hint.textContent = '🎤 Habla ya...';
+  };
   recognition.onerror = ()=>{
     clearSilenceTimer();
     const micBtn = document.getElementById('micBtn');
@@ -465,6 +488,8 @@ if(SpeechRec){
     const micBtn = document.getElementById('micBtn');
     const wasListening = micBtn && micBtn.classList.contains('listening');
     if(micBtn) micBtn.classList.remove('listening');
+    const hint = document.getElementById('micHint');
+    if(hint) hint.textContent = 'Manos libres: escucha sola tras cada respuesta. Toca el micro para parar o repetir.';
     if(wasListening) submitTextTurn();
   };
 }
@@ -481,6 +506,7 @@ function setupMic(){
   micBtn.onclick = ()=>{
     cancelAutoListen();
     if(micBtn.classList.contains('listening')){ recognition.stop(); return; }
+    if(window.speechSynthesis) speechSynthesis.cancel();
     document.getElementById('textInput').value = '';
     micBtn.classList.add('listening');
     try{ recognition.start(); }catch(e){ micBtn.classList.remove('listening'); }
