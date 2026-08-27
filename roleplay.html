@@ -99,6 +99,12 @@
   .bubble.cliente{align-self:flex-start;background:var(--gris-200);color:var(--gris-800);border-bottom-left-radius:4px;}
   .bubble.objection{background:var(--obj-bg);color:var(--naranja);border:1px solid var(--obj-border);font-weight:600;}
 
+  .info-banner{
+    background:var(--azul-claro);color:var(--azul-osc);border:1px solid var(--azul);border-radius:10px;
+    padding:10px 12px;font-size:13.5px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:8px;
+  }
+  .info-dismiss{background:none;padding:2px 6px;font-size:14px;color:var(--azul-osc);flex:none;}
+
   .checklist{border-top:1px solid var(--gris-200);padding-top:12px;}
   .checklist h4{margin:0 0 8px;font-size:13px;color:var(--gris-500);text-transform:uppercase;letter-spacing:.03em;}
   .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:14px;}
@@ -317,10 +323,22 @@ function renderWelcome(){
   };
 }
 
+function isSafariBrowser(){
+  const ua = navigator.userAgent;
+  return /^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
+}
+let safariNoticeDismissed = false;
+
 function renderHome(){
+  const showSafariNotice = isSafariBrowser() && !safariNoticeDismissed;
   app.innerHTML = `
     ${header(true)}
     <main>
+      ${showSafariNotice ? `
+        <div class="info-banner" id="safariNotice">
+          <span>🎤 Para que el micrófono te entienda mejor, usa <b>Chrome</b> en vez de Safari.</span>
+          <button class="info-dismiss" id="dismissSafari">✕</button>
+        </div>` : ''}
       <div class="card">
         <h2>Elige un perfil de cliente</h2>
         <p class="lead">Vas a hacer la llamada de seguimiento de una prueba. Habla como en una llamada real.</p>
@@ -345,6 +363,8 @@ function renderHome(){
     const v = prompt('Cambiar nombre:', store.name);
     if(v && v.trim()){ store.name=v.trim(); saveStore(); render(); }
   };
+  const dismissBtn = document.getElementById('dismissSafari');
+  if(dismissBtn) dismissBtn.onclick = ()=>{ safariNoticeDismissed = true; render(); };
 }
 
 function getProfile(id){ return PROFILES.find(p=>p.id===id); }
