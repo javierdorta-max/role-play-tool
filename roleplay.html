@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Role Play Aquaservice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#0d6fb8; --azul-osc:#095089; --azul-claro:#e8f2fb;
+    --verde:#1f9d55; --rojo:#c0392b; --naranja:#c9760d;
+    --bg:#f1f5f8; --surface:#ffffff; --surface-2:#e2e9ee;
+    --texto:#16232e; --texto-mute:#5b6f80; --borde:#e2e9ee;
+    --warn-bg:#fdeee9; --warn-border:#f3c7ba;
+    --obj-bg:#fdf0e0; --obj-border:#f2d2a3;
+    --radio:14px;
+    --f-display:'Sora',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --f-body:'Public Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --azul:#3d97dd; --azul-osc:#1f6fa8; --azul-claro:#173247;
+      --verde:#3ecb7a; --rojo:#e2695a; --naranja:#e2954a;
+      --bg:#0c141c; --surface:#151f29; --surface-2:#20303d;
+      --texto:#e8eef3; --texto-mute:#93a7b7; --borde:#26394a;
+      --warn-bg:#3a2420; --warn-border:#5c3830;
+      --obj-bg:#3a2e1a; --obj-border:#5c4726;
+    }
+  }
+  :root[data-theme="dark"]{
+    --azul:#3d97dd; --azul-osc:#1f6fa8; --azul-claro:#173247;
+    --verde:#3ecb7a; --rojo:#e2695a; --naranja:#e2954a;
+    --bg:#0c141c; --surface:#151f29; --surface-2:#20303d;
+    --texto:#e8eef3; --texto-mute:#93a7b7; --borde:#26394a;
+    --warn-bg:#3a2420; --warn-border:#5c3830;
+    --obj-bg:#3a2e1a; --obj-border:#5c4726;
+  }
+  /* Alias legacy token names onto the new palette so every rule below stays theme-aware */
+  :root{ --gris-100:var(--bg); --gris-200:var(--surface-2); --gris-500:var(--texto-mute); --gris-800:var(--texto); }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--gris-100); color:var(--gris-800);
+    font:16px/1.45 var(--f-body);
+    -webkit-tap-highlight-color:transparent;
+  }
+  #app{max-width:900px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;}
+  header.top{
+    background:var(--azul); color:#fff; padding:14px 18px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  header.top h1{font:700 17px/1.2 var(--f-display);margin:0;}
+  header.top .who{font-size:13px;opacity:.9;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;}
+  main{flex:1;padding:18px;padding-bottom:32px;}
+  .card{
+    background:var(--surface);border-radius:var(--radio);padding:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:16px;border:1px solid var(--borde);
+  }
+  h2{font:700 19px/1.25 var(--f-display);margin:0 0 6px;}
+  p.lead{color:var(--gris-500);margin:0 0 18px;font-size:14.5px;}
+  input[type=text]{
+    width:100%;padding:13px 14px;font:16px var(--f-body);border:1px solid var(--gris-200);
+    border-radius:10px;background:var(--surface);color:var(--gris-800);
+  }
+  button{
+    font:inherit;cursor:pointer;border:none;border-radius:10px;
+    padding:13px 18px;font-size:15.5px;font-weight:600;
+  }
+  .btn-primary{background:var(--azul);color:#fff;}
+  .btn-primary:active{background:var(--azul-osc);}
+  .btn-secondary{background:var(--gris-200);color:var(--gris-800);}
+  .btn-block{width:100%;margin-top:12px;}
+  .profile-card{
+    border:2px solid var(--gris-200);border-radius:var(--radio);padding:16px;margin-bottom:12px;
+    cursor:pointer;transition:border-color .15s;
+  }
+  .profile-card:active{border-color:var(--azul);}
+  .profile-card h3{margin:0 0 4px;font:700 16px/1.3 var(--f-display);}
+  .profile-card p{margin:0;color:var(--gris-500);font-size:14px;}
+  .toplink{background:none;color:#fff;text-decoration:underline;padding:6px 4px;font-weight:500;font-size:13.5px;}
+
+  /* Ejercicio */
+  .phase-bar{display:flex;gap:6px;margin-bottom:14px;}
+  .phase-dot{flex:1;height:6px;border-radius:4px;background:var(--gris-200);}
+  .phase-dot.done{background:var(--verde);}
+  .phase-dot.active{background:var(--azul);}
+  .phase-title{font:700 15px/1.3 var(--f-display);margin-bottom:14px;color:var(--azul-osc);}
+  .warning-banner{
+    background:var(--warn-bg);color:var(--rojo);border:1px solid var(--warn-border);border-radius:10px;
+    padding:10px 12px;font-size:13.5px;margin-bottom:12px;display:none;
+  }
+  .warning-banner.show{display:block;}
+
+  .chat{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:48vh;overflow-y:auto;padding:4px 2px;}
+  .bubble{max-width:82%;padding:10px 14px;border-radius:16px;font-size:15px;}
+  .bubble.comercial{align-self:flex-end;background:var(--azul);color:#fff;border-bottom-right-radius:4px;}
+  .bubble.cliente{align-self:flex-start;background:var(--gris-200);color:var(--gris-800);border-bottom-left-radius:4px;}
+  .bubble.objection{background:var(--obj-bg);color:var(--naranja);border:1px solid var(--obj-border);font-weight:600;}
+
+  .checklist{border-top:1px solid var(--gris-200);padding-top:12px;}
+  .checklist h4{margin:0 0 8px;font-size:13px;color:var(--gris-500);text-transform:uppercase;letter-spacing:.03em;}
+  .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:14px;}
+  .check-item .mark{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid var(--gris-200);margin-top:1px;}
+  .check-item.hit .mark{background:var(--verde);border-color:var(--verde);}
+  .check-item.hit span{color:var(--gris-800);}
+  .check-item span{color:var(--gris-500);}
+
+  .input-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+  .input-row input[type=text]{flex:1;}
+  #micBtn{
+    flex:none;width:56px;height:56px;border-radius:50%;background:var(--azul);color:#fff;
+    font-size:22px;display:flex;align-items:center;justify-content:center;
+  }
+  #micBtn.listening{background:var(--rojo);animation:pulse 1.1s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.5);}70%{box-shadow:0 0 0 14px rgba(192,57,43,0);}100%{box-shadow:0 0 0 0 rgba(192,57,43,0);}}
+  .footer-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .footer-actions button{flex:1;min-width:140px;}
+  .btn-next.ready{background:var(--verde);color:#fff;}
+  .hint{font-size:12.5px;color:var(--gris-500);text-align:center;margin-top:6px;}
+  .quit-link{background:none;color:var(--gris-500);text-decoration:underline;font-size:13px;font-weight:500;padding:4px 0;margin-top:14px;}
+
+  /* Resultados */
+  .score-hero{text-align:center;padding:10px 0 18px;}
+  .score-num{font:800 52px/1 var(--f-display);color:var(--azul);font-variant-numeric:tabular-nums;}
+  .score-sub{color:var(--gris-500);font-size:14px;margin-top:4px;}
+  .breakdown{display:flex;gap:10px;margin:14px 0;flex-wrap:wrap;}
+  .breakdown div{flex:1;min-width:120px;background:var(--gris-100);border-radius:10px;padding:10px 12px;text-align:center;}
+  .breakdown b{display:block;font:700 20px/1.2 var(--f-display);color:var(--azul-osc);font-variant-numeric:tabular-nums;}
+  .breakdown span{font-size:12px;color:var(--gris-500);}
+  .fb-list{list-style:none;margin:0;padding:0;}
+  .fb-list li{padding:8px 0;border-bottom:1px solid var(--gris-100);font-size:14.5px;}
+  .fb-list li:last-child{border-bottom:none;}
+  .fb-ok::before{content:"✅ ";}
+  .fb-bad::before{content:"⚠️ ";}
+  .hist-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--gris-100);}
+  .hist-row:last-child{border-bottom:none;}
+  .hist-row b{font:700 15px/1.3 var(--f-display);}
+  .hist-row .meta{font-size:12.5px;color:var(--gris-500);}
+  .hist-score{font:800 18px/1 var(--f-display);color:var(--azul);font-variant-numeric:tabular-nums;}
+  .empty{color:var(--gris-500);font-size:14.5px;text-align:center;padding:20px 0;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const PHASES = [
+  {id:'presentacion', name:'1. Presentación', items:[
+    {id:'saluda_identifica', label:'Se identifica y menciona Aquaservice', kw:['aquaservice']},
+    {id:'buen_momento', label:'Pregunta si es buen momento para hablar', kw:['buen momento','le pillo bien','tiene un minuto','puede hablar ahora','es mal momento','tiene un momento']},
+    {id:'confirma_decisor', label:'Confirma que habla con quien decide', kw:['usted decide','toma la decision','quien decide','autorizo la prueba','decides tu','mandas tu','tu decides']}
+  ]},
+  {id:'investigacion', name:'2. Investigación (I+D)', items:[
+    {id:'pregunta_conocia', label:'Pregunta si conocían Aquaservice', kw:['nos conocia','conociais aquaservice','sabiais de nosotros','les sonaba','nos conociais','conociais la marca']},
+    {id:'pregunta_antes', label:'Pregunta cómo se organizaban antes', kw:['como se organizaban','como comprabais el agua','que haciais antes','de donde sacabais el agua','como lo haciais antes','como os apanabais']},
+    {id:'pregunta_gusto', label:'Pregunta qué les ha gustado de la prueba', kw:['ha gustado','que tal la prueba','que tal la experiencia','ha parecido','que tal con el dispensador','que tal con la fuente','que tal va todo']},
+    {id:'pregunta_personas', label:'Pregunta cuántas personas hay en casa', kw:['cuantas personas','cuantos sois','cuantos en casa','personas en el hogar','cuantos vivis','cuantos hay en casa']}
+  ]},
+  {id:'servicio', name:'3. Servicio (catálogo y valor)', items:[
+    {id:'sostenibilidad', label:'Menciona sostenibilidad / cuidado del planeta', kw:['sostenib','medio ambiente','planeta','sin residuos','reciclam','huella']},
+    {id:'reparto_programado', label:'Explica el reparto programado (cada 28 días)', kw:['28 dias','cuatro semanas','reparto programado','cada 4 semanas','cada veintiocho']},
+    {id:'urgencia', label:'Menciona el servicio de urgencia 24/48h', kw:['servicio de urgencia','24 horas','48 horas','urgente','veinticuatro','cuarenta y ocho']},
+    {id:'app', label:'Menciona la app de autogestión', kw:['aplicacion','la app','desde el movil','autogestion','autogestionas']}
+  ], negative:{id:'no_cede_precio', label:'No da el precio antes de exponer el valor', kw:['precio','cuesta','euros al mes','cuanto vale','cuanto cuesta','euros al']}},
+  {id:'cierre', name:'4. Promoción y cierre', items:[
+    {id:'precio_estandar', label:'Da el precio estándar de referencia', kw:['15 euros','quince euros','precio estandar','sin promocion','precio normal']},
+    {id:'plan_ahorro', label:'Presenta el Plan Ahorro Familiar / promoción', kw:['plan ahorro','plan familiar','le presento la promocion','activamos la promocion','con la promocion','esta promocion','tenemos una promocion']},
+    {id:'elimina_deposito', label:'Ofrece eliminar el depósito', kw:['sin deposito','no pagaria deposito','quito el deposito','elimino el deposito','eliminamos el deposito','no paga deposito','sin fianza','deposito gratis','no tendria que pagar deposito']},
+    {id:'pregunta_plan', label:'Pregunta qué plan de consumo prefiere', kw:['cuantas botellas','que plan prefiere','plan de 4','plan de 3','cuantas unidades','el de cuatro o el de tres','cuantas garrafas']},
+    {id:'cierre_compromiso', label:'Cierra pidiendo el compromiso', kw:['le parece bien','empezamos','lo dejamos hecho','firmamos','activamos el servicio','damos de alta','damos por hecho']}
+  ]}
+];
+
+const GENERIC_ACK = ['Vale, entendido.','Ajá.','De acuerdo.','Sigue, te escucho.'];
+
+const PROFILES = [
+  {
+    id:'ricardo', name:'Ricardo', subtitle:'Familia con prueba en casa, amable pero va rápido al precio.',
+    answers:{
+      presentacion:{default:['Sí, dígame, tengo un momento.','Sí, soy yo, usted dirá.']},
+      investigacion:{
+        pregunta_conocia:'Os conocía de veros por la tele, y algún camión por la calle.',
+        pregunta_antes:'Comprábamos las garrafas en el súper, la más barata.',
+        pregunta_gusto:'El agua fresquita, y hacer té con el agua caliente. Eso sí, los niños no paran de tocar el grifo.',
+        pregunta_personas:'Somos cuatro en casa.',
+        default:['Ajá.','Vale.']
+      },
+      servicio:{default:['Ajá, suena bien.','Vale, entendido.','De acuerdo.']},
+      cierre:{pregunta_plan:'Pues empezamos con el de cuatro, me parece bien.', default:['Vale.','De acuerdo.']}
+    },
+    objections:[
+      {id:'precio_temprano', phase:'servicio', category:'Aplazamiento de precio', text:'Bueno, yo lo que quiero ya es que me digas los precios, porque a eso voy.', hint:'No cedas: explica primero el valor del servicio y retoma el precio en su momento.', kw:['antes quiero','dejame explicarte','un momento mas','te lo cuento','ahora te cuento','primero quiero','despues te digo el precio','ya llegamos al precio','en un momento te digo el precio']},
+      {id:'caro', phase:'cierre', afterItem:'precio_estandar', category:'Precio y coste', text:'Uy, eso me parece caro, la verdad.', hint:'Reencuadra con la promoción / plan ahorro familiar, sin ponerte a la defensiva.', kw:['promocion','plan ahorro','descuento','no te preocupes','plan familiar']},
+      {id:'super_barato', phase:'cierre', category:'Precio y coste', text:'Es que comprando las garrafas en el súper me sale más barato.', hint:'Compara el coste real por litro incluyendo desplazamiento y tiempo; el precio de súper es inestable.', kw:['coste real','por litro','desplazamiento','tiempo','comodidad','estable','sin sorpresas']}
+    ]
+  },
+  {
+    id:'esceptico', name:'Cliente escéptico', subtitle:'Desconfía de marcas nuevas y de firmar compromisos.',
+    answers:{
+      presentacion:{default:['Sí, dígame, aunque no tengo mucho tiempo.']},
+      investigacion:{
+        pregunta_conocia:'No mucho, la verdad, prefiero ir a lo seguro.',
+        pregunta_antes:'Comprando en el súper, como toda la vida.',
+        pregunta_gusto:'Bueno, no está mal, pero no sé si me fío del todo.',
+        pregunta_personas:'Somos dos en casa.',
+        default:['Ya veremos.']
+      },
+      servicio:{default:['Ya veremos.','Mmm, vale.','No sé, sigue.']},
+      cierre:{pregunta_plan:'Bueno, el más pequeño, para probar.', default:['Vale.','Ya veremos.']}
+    },
+    objections:[
+      {id:'no_conozco_marca', phase:'servicio', category:'Confianza', text:'No conozco la marca del agua que ofrecéis, prefiero mi marca de confianza.', hint:'Explica origen del agua, controles de calidad y ofrece ficha técnica.', kw:['calidad','analisis','control','origen','ficha tecnica','manantial']},
+      {id:'limpieza', phase:'servicio', category:'Confianza', text:'¿Y cómo sé que el agua del dispensador está tan limpia como la embotellada?', hint:'Detalla el mantenimiento periódico, la limpieza y las garrafas selladas de un solo uso.', kw:['mantenimiento','limpieza','desinfeccion','sellad']},
+      {id:'contrato', phase:'cierre', category:'Compromiso contractual', text:'No quiero firmar un contrato de permanencia.', hint:'Explica las condiciones reales (12 meses) y la flexibilidad para darse de baja.', kw:['doce meses','12 meses','flexible','condiciones','sin letra pequena','baja','flexibilidad']}
+    ]
+  },
+  {
+    id:'comodidad', name:'Cliente de hábito', subtitle:'Acostumbrado al súper, poco tiempo y poco sitio en casa.',
+    answers:{
+      presentacion:{default:['Vale, dígame, pero rápido que tengo prisa.']},
+      investigacion:{
+        pregunta_conocia:'Sí, os he visto por ahí, pero nunca lo había probado.',
+        pregunta_antes:'Íbamos al súper cada semana a por agua, un rollo la verdad.',
+        pregunta_gusto:'Lo cómodo, la verdad, no tener que cargar con las botellas.',
+        pregunta_personas:'Somos tres en casa.',
+        default:['Vale.']
+      },
+      servicio:{default:['Suena bien.','Vale, sigue.','Ajá.']},
+      cierre:{pregunta_plan:'Vale, el de tres entonces.', default:['Vale.','De acuerdo.']}
+    },
+    objections:[
+      {id:'acostumbrado_super', phase:'investigacion', category:'Comodidad', text:'Es que estoy acostumbrado a comprar mi agua en el súper, no quiero complicarme.', hint:'Empatiza y muestra que el servicio elimina justo esa tarea: comprar, cargar y transportar.', kw:['comodidad','te lo llevamos','nosotros nos encargamos','no tienes que','te ahorras','sin esfuerzo']},
+      {id:'sin_sitio', phase:'servicio', category:'Espacio e instalación', text:'Es que no tengo mucho sitio en la cocina para un dispensador.', hint:'Muestra la gama de modelos compactos o de sobremesa adaptados a cualquier cocina.', kw:['compacto','modelos','tamano','sobremesa','se adapta','distintos tamanos']},
+      {id:'sin_tiempo', phase:'cierre', category:'Aplazamiento', text:'No tengo tiempo ahora para pensarlo, ya me apunto otro día.', hint:'Es una objeción de aplazamiento: propone cerrarlo ahora en dos minutos, sin presionar.', kw:['dos minutos','rapido','ahora mismo','no le quito mas tiempo','fecha concreta','un momento']}
+    ]
+  }
+];
+
+function norm(s){
+  return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+function matchesAny(normText, kws){ return kws.some(k=>normText.includes(norm(k))); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function resolveLine(val){ return Array.isArray(val) ? pick(val) : val; }
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+}
+
+const STORAGE_KEY = 'aquaservice_roleplay_v1';
+function loadStore(){
+  try{ return Object.assign({name:null, sessions:[]}, JSON.parse(localStorage.getItem(STORAGE_KEY))); }
+  catch(e){ return {name:null, sessions:[]}; }
+}
+function saveStore(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); }catch(e){} }
+
+let store = loadStore();
+let view = store.name ? 'home' : 'welcome';
+let session = null;
+let autoAdvanceTimer = null;
+function cancelAutoAdvance(){ if(autoAdvanceTimer){ clearTimeout(autoAdvanceTimer); autoAdvanceTimer=null; } }
+
+let autoListenTimer = null;
+function cancelAutoListen(){ if(autoListenTimer){ clearTimeout(autoListenTimer); autoListenTimer=null; } }
+function scheduleAutoListen(){
+  cancelAutoListen();
+  if(!recognition) return;
+  autoListenTimer = setTimeout(()=>{
+    autoListenTimer = null;
+    const micBtn = document.getElementById('micBtn');
+    const input = document.getElementById('textInput');
+    if(!micBtn || !input || micBtn.classList.contains('listening')) return;
+    input.value = '';
+    micBtn.classList.add('listening');
+    try{ recognition.start(); }catch(e){ micBtn.classList.remove('listening'); }
+  }, 1000);
+}
+
+const app = document.getElementById('app');
+
+function render(){
+  if(view==='welcome') return renderWelcome();
+  if(view==='home') return renderHome();
+  if(view==='exercise') return renderExercise();
+  if(view==='results') return renderResults();
+  if(view==='history') return renderHistory();
+}
+
+function header(showHome){
+  return `<header class="top">
+    <h1>💧 Role Play Aquaservice</h1>
+    ${showHome ? `<span class="who" id="whoLabel">${store.name||''}</span>` : ''}
+  </header>`;
+}
+
+function renderWelcome(){
+  app.innerHTML = `
+    ${header(false)}
+    <main>
+      <div class="card">
+        <h2>¿Cómo te llamas?</h2>
+        <p class="lead">Así guardamos tu historial de ejercicios en este iPad.</p>
+        <input type="text" id="nameInput" placeholder="Nombre y apellido">
+        <button class="btn-primary btn-block" id="startBtn">Empezar</button>
+      </div>
+    </main>`;
+  document.getElementById('startBtn').onclick = ()=>{
+    const v = document.getElementById('nameInput').value.trim();
+    if(!v) return;
+    store.name = v; saveStore(); view='home'; render();
+  };
+}
+
+function renderHome(){
+  app.innerHTML = `
+    ${header(true)}
+    <main>
+      <div class="card">
+        <h2>Elige un perfil de cliente</h2>
+        <p class="lead">Vas a hacer la llamada de seguimiento de una prueba. Habla como en una llamada real.</p>
+        ${PROFILES.map(p=>`
+          <div class="profile-card" data-id="${p.id}">
+            <h3>${p.name}</h3>
+            <p>${p.subtitle}</p>
+          </div>`).join('')}
+      </div>
+      <div class="card">
+        <h2>Tu historial</h2>
+        <p class="lead">${store.sessions.length} ejercicio(s) guardados en este iPad.</p>
+        <button class="btn-secondary btn-block" id="histBtn">Ver historial</button>
+      </div>
+    </main>`;
+  document.querySelectorAll('.profile-card').forEach(el=>{
+    el.onclick = ()=> startExercise(el.dataset.id);
+  });
+  document.getElementById('histBtn').onclick = ()=>{ view='history'; render(); };
+  const who = document.getElementById('whoLabel');
+  if(who) who.onclick = ()=>{
+    const v = prompt('Cambiar nombre:', store.name);
+    if(v && v.trim()){ store.name=v.trim(); saveStore(); render(); }
+  };
+}
+
+function getProfile(id){ return PROFILES.find(p=>p.id===id); }
+
+function startExercise(profileId){
+  cancelAutoAdvance();
+  cancelAutoListen();
+  const phaseState = {};
+  PHASES.forEach(ph=>{ phaseState[ph.id] = {hit:{}, priceMentioned:false, priceMentionedEarly:false}; });
+  session = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    comercial: store.name,
+    profileId,
+    currentPhaseIndex: 0,
+    chat: [],
+    phaseState,
+    objectionsFired: [],
+    pendingObjection: null,
+    objectionsLog: []
+  };
+  view='exercise';
+  addChatBubble('cliente', '(Suena el teléfono) ¿Dígame?');
+  render();
+  scheduleAutoListen();
+}
+
+function currentPhase(){ return PHASES[session.currentPhaseIndex]; }
+
+function addChatBubble(who, text, kind){
+  session.chat.push({who, text, kind: kind||'normal'});
+}
+
+function renderExercise(){
+  const profile = getProfile(session.profileId);
+  const phase = currentPhase();
+  const ps = session.phaseState[phase.id];
+  const hitCount = phase.items.filter(it=>ps.hit[it.id]).length;
+  const ready = hitCount >= Math.ceil(phase.items.length*0.75) && !session.pendingObjection;
+
+  app.innerHTML = `
+    ${header(false)}
+    <main>
+      <div class="card">
+        <div class="phase-bar">
+          ${PHASES.map((p,i)=>`<div class="phase-dot ${i<session.currentPhaseIndex?'done':(i===session.currentPhaseIndex?'active':'')}"></div>`).join('')}
+        </div>
+        <div class="phase-title">${phase.name} · Cliente: ${profile.name}</div>
+        <div class="warning-banner ${ps.priceMentionedEarly?'show':''}">⚠️ Has mencionado el precio antes de terminar de exponer el valor del servicio.</div>
+        <div class="chat" id="chatBox">
+          ${session.chat.map(m=>`<div class="bubble ${m.who} ${m.kind==='objection'?'objection':''}">${m.text}</div>`).join('')}
+        </div>
+        <div class="input-row">
+          <button id="micBtn">🎤</button>
+          <input type="text" id="textInput" placeholder="Pulsa el micro y habla, o escribe tu turno...">
+          <button class="btn-secondary" id="sendBtn">Enviar</button>
+        </div>
+        <div class="hint" id="micHint" style="text-align:left;margin:2px 0 0;"></div>
+        <div class="checklist">
+          <h4>Checklist de esta fase</h4>
+          ${phase.items.map(it=>`
+            <div class="check-item ${ps.hit[it.id]?'hit':''}">
+              <div class="mark"></div><span>${it.label}</span>
+            </div>`).join('')}
+        </div>
+        <div class="footer-actions">
+          <button class="btn-secondary btn-next ${ready?'ready':''}" id="nextPhaseBtn">
+            ${session.currentPhaseIndex < PHASES.length-1 ? (ready ? 'Avanzar ahora →' : 'Saltar a la siguiente fase →') : 'Terminar ejercicio ✔'}
+          </button>
+        </div>
+        <div class="hint">${ready ? (autoAdvanceTimer ? '✅ Checklist completo — pasando de fase automáticamente...' : 'Checklist completo.') : 'Sigue la conversación para completar el checklist.'}</div>
+        <button class="quit-link" id="quitBtn">Abandonar ejercicio</button>
+      </div>
+    </main>`;
+
+  const chatBox = document.getElementById('chatBox');
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  document.getElementById('sendBtn').onclick = submitTextTurn;
+  document.getElementById('textInput').addEventListener('keydown', e=>{ if(e.key==='Enter') submitTextTurn(); });
+  document.getElementById('nextPhaseBtn').onclick = advancePhase;
+  document.getElementById('quitBtn').onclick = ()=>{
+    if(confirm('¿Abandonar el ejercicio? No se guardará.')){ cancelAutoAdvance(); cancelAutoListen(); session=null; view='home'; render(); }
+  };
+  setupMic();
+}
+
+function submitTextTurn(){
+  const input = document.getElementById('textInput');
+  const v = input.value.trim();
+  if(!v) return;
+  input.value='';
+  handleCommercialTurn(v);
+}
+
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let silenceTimer = null;
+function clearSilenceTimer(){ if(silenceTimer){ clearTimeout(silenceTimer); silenceTimer=null; } }
+
+if(SpeechRec){
+  recognition = new SpeechRec();
+  recognition.lang = 'es-ES';
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = e=>{
+    const input = document.getElementById('textInput');
+    if(!input) return;
+    let text = '';
+    for(let i=e.resultIndex;i<e.results.length;i++) text += e.results[i][0].transcript;
+    input.value = text;
+    clearSilenceTimer();
+    silenceTimer = setTimeout(()=>{ try{ recognition.stop(); }catch(e){} }, 1100);
+  };
+  recognition.onerror = ()=>{
+    clearSilenceTimer();
+    const micBtn = document.getElementById('micBtn');
+    if(micBtn) micBtn.classList.remove('listening');
+  };
+  recognition.onend = ()=>{
+    clearSilenceTimer();
+    const micBtn = document.getElementById('micBtn');
+    const wasListening = micBtn && micBtn.classList.contains('listening');
+    if(micBtn) micBtn.classList.remove('listening');
+    if(wasListening) submitTextTurn();
+  };
+}
+
+function setupMic(){
+  const micBtn = document.getElementById('micBtn');
+  const hint = document.getElementById('micHint');
+  if(!recognition){
+    micBtn.style.opacity=.4;
+    micBtn.onclick = ()=> alert('Este navegador no soporta dictado por voz. Usa el campo de texto.');
+    return;
+  }
+  if(hint) hint.textContent = 'Manos libres: escucha sola tras cada respuesta. Toca el micro para parar o repetir.';
+  micBtn.onclick = ()=>{
+    cancelAutoListen();
+    if(micBtn.classList.contains('listening')){ recognition.stop(); return; }
+    document.getElementById('textInput').value = '';
+    micBtn.classList.add('listening');
+    try{ recognition.start(); }catch(e){ micBtn.classList.remove('listening'); }
+  };
+}
+
+function findFireableObjection(profile, phaseId){
+  return profile.objections.find(o=>
+    o.phase===phaseId &&
+    !session.objectionsFired.includes(o.id) &&
+    (!o.afterItem || session.phaseState[phaseId].hit[o.afterItem])
+  );
+}
+
+function handleCommercialTurn(rawText){
+  const text = rawText.trim();
+  if(!text) return;
+  cancelAutoAdvance();
+  cancelAutoListen();
+  addChatBubble('comercial', text);
+  const normText = norm(text);
+  const phase = currentPhase();
+  const phaseId = phase.id;
+  const ps = session.phaseState[phaseId];
+  const profile = getProfile(session.profileId);
+  let clientBubble = null;
+  let bubbleKind = 'normal';
+
+  if(session.pendingObjection){
+    const obj = session.pendingObjection;
+    const handled = matchesAny(normText, obj.kw);
+    session.objectionsLog.push({id:obj.id, text:obj.text, category:obj.category||'', hint:obj.hint, handled});
+    session.pendingObjection = null;
+    clientBubble = handled
+      ? pick(['De acuerdo, tiene sentido.','Vale, visto así...','Ah, no lo había pensado así.'])
+      : pick(['Mmm, no sé, no me has convencido del todo.','No termino de verlo, la verdad.','Ya, bueno...']);
+  }
+
+  let newlyHitItem = null;
+  phase.items.forEach(item=>{
+    if(!ps.hit[item.id] && matchesAny(normText, item.kw)){
+      ps.hit[item.id] = true;
+      if(!newlyHitItem) newlyHitItem = item;
+    }
+  });
+
+  if(phase.negative && matchesAny(normText, phase.negative.kw) && !ps.priceMentioned){
+    ps.priceMentioned = true;
+    const hitCount = Object.keys(ps.hit).length;
+    ps.priceMentionedEarly = hitCount < 2;
+  }
+
+  if(!clientBubble){
+    const answers = profile.answers[phaseId] || {};
+    if(newlyHitItem && answers[newlyHitItem.id]){
+      clientBubble = resolveLine(answers[newlyHitItem.id]);
+    } else {
+      const nextObj = findFireableObjection(profile, phaseId);
+      if(nextObj){
+        session.objectionsFired.push(nextObj.id);
+        session.pendingObjection = nextObj;
+        clientBubble = nextObj.text;
+        bubbleKind = 'objection';
+      } else {
+        clientBubble = resolveLine(answers.default) || pick(GENERIC_ACK);
+      }
+    }
+  }
+
+  addChatBubble('cliente', clientBubble, bubbleKind);
+
+  const hitCount = phase.items.filter(it=>ps.hit[it.id]).length;
+  const ready = hitCount >= Math.ceil(phase.items.length*0.75) && !session.pendingObjection;
+  if(ready){
+    autoAdvanceTimer = setTimeout(()=>{ autoAdvanceTimer=null; advancePhase(); }, 700);
+  } else {
+    scheduleAutoListen();
+  }
+
+  render();
+}
+
+function advancePhase(){
+  cancelAutoAdvance();
+  cancelAutoListen();
+  if(session.pendingObjection){
+    if(!confirm('Aún hay una objeción sin resolver. ¿Avanzar igualmente?')) return;
+    session.objectionsLog.push({id:session.pendingObjection.id, text:session.pendingObjection.text, category:session.pendingObjection.category||'', hint:session.pendingObjection.hint, handled:false});
+    session.pendingObjection = null;
+  }
+  if(session.currentPhaseIndex < PHASES.length-1){
+    session.currentPhaseIndex++;
+    addChatBubble('cliente', pick(['Vale, tú dirás.','Adelante, te escucho.','Sigue, sigue.']));
+    render();
+    scheduleAutoListen();
+  } else {
+    finishExercise();
+  }
+}
+
+function buildReport(){
+  const phaseScores = {};
+  let sumPct = 0;
+  PHASES.forEach(phase=>{
+    const ps = session.phaseState[phase.id];
+    const hit = phase.items.filter(it=>ps.hit[it.id]).length;
+    const pct = Math.round((hit/phase.items.length)*100);
+    phaseScores[phase.id] = {name:phase.name, hit, total:phase.items.length, pct};
+    sumPct += pct;
+  });
+  const avgPct = Math.round(sumPct/PHASES.length);
+
+  const objTotal = session.objectionsLog.length;
+  const objHandled = session.objectionsLog.filter(o=>o.handled).length;
+  const objPct = objTotal ? Math.round((objHandled/objTotal)*100) : 100;
+
+  let finalScore = Math.round(avgPct*0.7 + objPct*0.3);
+  const priceEarly = session.phaseState.servicio.priceMentionedEarly;
+  if(priceEarly) finalScore = Math.max(0, finalScore-10);
+
+  const aciertos = [], mejoras = [];
+  PHASES.forEach(phase=>{
+    const ps = session.phaseState[phase.id];
+    phase.items.forEach(item=>{
+      const line = `${phase.name.replace(/^\d+\.\s*/,'')}: ${item.label}`;
+      (ps.hit[item.id] ? aciertos : mejoras).push(line);
+    });
+  });
+  if(priceEarly) mejoras.push('Diste el precio antes de terminar de exponer el valor del servicio (fase Servicio).');
+  session.objectionsLog.forEach(o=>{
+    if(o.handled) aciertos.push(`Gestionaste bien la objeción: "${o.text}"`);
+    else mejoras.push(`No convenciste en la objeción "${o.text}" — prueba con: ${o.hint}`);
+  });
+
+  return {phaseScores, avgPct, objTotal, objHandled, objPct, priceEarly, finalScore, aciertos, mejoras};
+}
+
+function finishExercise(){
+  const report = buildReport();
+  const saved = {
+    id: session.id, date: session.date, comercial: session.comercial,
+    profileId: session.profileId, profileName: getProfile(session.profileId).name,
+    report
+  };
+  store.sessions.unshift(saved);
+  saveStore();
+  session = saved;
+  view = 'results';
+  render();
+}
+
+function renderResults(){
+  const r = session.report;
+  app.innerHTML = `
+    ${header(true)}
+    <main>
+      <div class="card">
+        <div class="score-hero">
+          <div class="score-num">${r.finalScore}</div>
+          <div class="score-sub">Score global · Cliente: ${session.profileName}</div>
+        </div>
+        <div class="breakdown">
+          <div><b>${r.avgPct}%</b><span>Checklist medio</span></div>
+          <div><b>${r.objHandled}/${r.objTotal}</b><span>Objeciones gestionadas</span></div>
+          <div><b>${r.priceEarly?'Sí':'No'}</b><span>Precio prematuro</span></div>
+        </div>
+        ${PHASES.map(p=>`<div class="check-item hit"><span><b>${r.phaseScores[p.id].name}:</b> ${r.phaseScores[p.id].hit}/${r.phaseScores[p.id].total} (${r.phaseScores[p.id].pct}%)</span></div>`).join('')}
+      </div>
+      <div class="card">
+        <h2>Puntos fuertes</h2>
+        <ul class="fb-list">${r.aciertos.length ? r.aciertos.map(a=>`<li class="fb-ok">${a}</li>`).join('') : '<li>Todavía ninguno.</li>'}</ul>
+      </div>
+      <div class="card">
+        <h2>Áreas de mejora</h2>
+        <ul class="fb-list">${r.mejoras.length ? r.mejoras.map(a=>`<li class="fb-bad">${a}</li>`).join('') : '<li>¡Ninguna! Ejercicio completo.</li>'}</ul>
+      </div>
+      <div class="card">
+        <button class="btn-primary btn-block" id="exportBtn">⬇ Exportar historial (backup)</button>
+        <button class="btn-secondary btn-block" id="homeBtn">Volver al inicio</button>
+      </div>
+    </main>`;
+  document.getElementById('exportBtn').onclick = exportAll;
+  document.getElementById('homeBtn').onclick = ()=>{ session=null; view='home'; render(); };
+}
+
+function renderHistory(){
+  app.innerHTML = `
+    ${header(true)}
+    <main>
+      <div class="card">
+        <h2>Historial de ${store.name}</h2>
+        ${store.sessions.length===0 ? '<p class="empty">Todavía no hay ejercicios guardados.</p>' : `
+          ${store.sessions.map(s=>`
+            <div class="hist-row">
+              <div>
+                <b>${s.profileName}</b>
+                <div class="meta">${fmtDate(s.date)}</div>
+              </div>
+              <div class="hist-score">${s.report.finalScore}</div>
+            </div>`).join('')}
+        `}
+        <button class="btn-primary btn-block" id="exportBtn">⬇ Exportar historial (backup)</button>
+        <button class="btn-secondary btn-block" id="backBtn">Volver</button>
+      </div>
+    </main>`;
+  document.getElementById('exportBtn').onclick = exportAll;
+  document.getElementById('backBtn').onclick = ()=>{ view='home'; render(); };
+}
+
+async function exportAll(){
+  const stamp = new Date().toISOString().slice(0,16).replace(/[-:T]/g,'');
+  const filename = `roleplay_${(store.name||'comercial').replace(/\s+/g,'_')}_${stamp}.json`;
+  const jsonStr = JSON.stringify(store, null, 2);
+
+  if(window.claude && typeof window.claude.use === 'function'){
+    let downloads = null;
+    try{ downloads = await window.claude.use('downloads'); }catch(e){ downloads = null; }
+    if(downloads){
+      try{ await downloads.save({filename, data: jsonStr}); }
+      catch(err){ if(err && err.code !== 'declined') alert('No se pudo exportar: ' + (err.message || err.code || 'error desconocido')); }
+      return;
+    }
+  }
+
+  const blob = new Blob([jsonStr], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+render();
+</script>
+</body>
+</html>
