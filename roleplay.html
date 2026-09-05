@@ -191,10 +191,10 @@ const PROFILES = [
         pregunta_antes:'Comprábamos las garrafas en el súper, la más barata.',
         pregunta_gusto:'El agua fresquita, y hacer té con el agua caliente. Eso sí, los niños no paran de tocar el grifo.',
         pregunta_personas:'Somos cuatro en casa.',
-        default:['Ajá.','Vale.']
+        default:['Ajá.','Vale.','Ya, ya.','Sigue, sigue.']
       },
-      servicio:{default:['Ajá, suena bien.','Vale, entendido.','De acuerdo.']},
-      cierre:{pregunta_plan:'Pues empezamos con el de cuatro, me parece bien.', default:['Vale.','De acuerdo.']}
+      servicio:{default:['Ajá, suena bien.','Vale, entendido.','De acuerdo.','Ya veo, ya.']},
+      cierre:{pregunta_plan:'Pues empezamos con el de cuatro, me parece bien.', default:['Vale.','De acuerdo.','Ya, entiendo.']}
     },
     objections:[
       {id:'precio_temprano', phase:'servicio', category:'Aplazamiento de precio', text:'Bueno, yo lo que quiero ya es que me digas los precios, porque a eso voy.', hint:'No cedas: explica primero el valor del servicio y retoma el precio en su momento.', kw:['antes quiero','dejame explicarte','un momento mas','te lo cuento','ahora te cuento','primero quiero','despues te digo el precio','ya llegamos al precio','en un momento te digo el precio']},
@@ -205,16 +205,16 @@ const PROFILES = [
   {
     id:'esceptico', name:'Cliente escéptico', subtitle:'Desconfía de marcas nuevas y de firmar compromisos.',
     answers:{
-      presentacion:{default:['Sí, dígame, aunque no tengo mucho tiempo.']},
+      presentacion:{default:['Sí, dígame, aunque no tengo mucho tiempo.','Usted dirá.']},
       investigacion:{
         pregunta_conocia:'No mucho, la verdad, prefiero ir a lo seguro.',
         pregunta_antes:'Comprando en el súper, como toda la vida.',
         pregunta_gusto:'Bueno, no está mal, pero no sé si me fío del todo.',
         pregunta_personas:'Somos dos en casa.',
-        default:['Ya veremos.']
+        default:['Ya veremos.','No sé, sigue contando.','Mmm, vale.','Ya, ya.']
       },
-      servicio:{default:['Ya veremos.','Mmm, vale.','No sé, sigue.']},
-      cierre:{pregunta_plan:'Bueno, el más pequeño, para probar.', default:['Vale.','Ya veremos.']}
+      servicio:{default:['Ya veremos.','Mmm, vale.','No sé, sigue.','Ya, entiendo.']},
+      cierre:{pregunta_plan:'Bueno, el más pequeño, para probar.', default:['Vale.','Ya veremos.','No sé qué decirte.']}
     },
     objections:[
       {id:'no_conozco_marca', phase:'servicio', category:'Confianza', text:'No conozco la marca del agua que ofrecéis, prefiero mi marca de confianza.', hint:'Explica origen del agua, controles de calidad y ofrece ficha técnica.', kw:['calidad','analisis','control','origen','ficha tecnica','manantial']},
@@ -225,16 +225,16 @@ const PROFILES = [
   {
     id:'comodidad', name:'Cliente de hábito', subtitle:'Acostumbrado al súper, poco tiempo y poco sitio en casa.',
     answers:{
-      presentacion:{default:['Vale, dígame, pero rápido que tengo prisa.']},
+      presentacion:{default:['Vale, dígame, pero rápido que tengo prisa.','Dígame, dígame.']},
       investigacion:{
         pregunta_conocia:'Sí, os he visto por ahí, pero nunca lo había probado.',
         pregunta_antes:'Íbamos al súper cada semana a por agua, un rollo la verdad.',
         pregunta_gusto:'Lo cómodo, la verdad, no tener que cargar con las botellas.',
         pregunta_personas:'Somos tres en casa.',
-        default:['Vale.']
+        default:['Vale.','Ajá.','Ya, sigue.']
       },
-      servicio:{default:['Suena bien.','Vale, sigue.','Ajá.']},
-      cierre:{pregunta_plan:'Vale, el de tres entonces.', default:['Vale.','De acuerdo.']}
+      servicio:{default:['Suena bien.','Vale, sigue.','Ajá.','Ya veo.']},
+      cierre:{pregunta_plan:'Vale, el de tres entonces.', default:['Vale.','De acuerdo.','Ya, ya.']}
     },
     objections:[
       {id:'acostumbrado_super', phase:'investigacion', category:'Comodidad', text:'Es que estoy acostumbrado a comprar mi agua en el súper, no quiero complicarme.', hint:'Empatiza y muestra que el servicio elimina justo esa tarea: comprar, cargar y transportar.', kw:['comodidad','te lo llevamos','nosotros nos encargamos','no tienes que','te ahorras','sin esfuerzo']},
@@ -245,16 +245,16 @@ const PROFILES = [
   {
     id:'detallista', name:'Cliente detallista', subtitle:'Cordial pero exhaustivo: quiere verificar cada condición antes de decidir.',
     answers:{
-      presentacion:{default:['Sí, dígame, aunque le aviso que voy a preguntar bastante.']},
+      presentacion:{default:['Sí, dígame, aunque le aviso que voy a preguntar bastante.','Dígame, dígame.']},
       investigacion:{
         pregunta_conocia:'Sí, ya había oído hablar, pero quiero saber bien todos los detalles antes de nada.',
         pregunta_antes:'Comprábamos en el súper, pero cada vez me fío menos de cambiar de proveedor sin mirarlo bien.',
         pregunta_gusto:'Bien, aunque tengo varias dudas que quiero resolver antes de seguir.',
         pregunta_personas:'Somos dos en casa.',
-        default:['Ajá, sigo.','Vale, apunto eso.']
+        default:['Ajá, sigo.','Vale, apunto eso.','Ya, ¿y qué más?']
       },
-      servicio:{default:['Entiendo, ¿y eso cómo funciona exactamente?','Vale, pero necesito estar seguro de eso.']},
-      cierre:{pregunta_plan:'Pues iría bien con el más pequeño, para no comprometerme de más.', default:['De acuerdo, pero quiero tenerlo todo claro por escrito.','Vale, sigo con dudas pero continúa.']}
+      servicio:{default:['Entiendo, ¿y eso cómo funciona exactamente?','Vale, pero necesito estar seguro de eso.','Ya, sigue explicando.']},
+      cierre:{pregunta_plan:'Pues iría bien con el más pequeño, para no comprometerme de más.', default:['De acuerdo, pero quiero tenerlo todo claro por escrito.','Vale, sigo con dudas pero continúa.','Ya, entiendo, ¿algo más?']}
     },
     objections:[
       {id:'camion_no_entra', phase:'servicio', category:'Logística', text:'Es que la ubicación de mi casa está en una calle estrecha donde el camión no entra.', hint:'El camión puede entrar perfectamente, y si no, se entrega con carretilla de mano desde donde pare.', kw:['carretilla','puede entrar','sin problema','no hace falta que entre']},
@@ -267,16 +267,16 @@ const PROFILES = [
   {
     id:'evasivo', name:'Cliente evasivo', subtitle:'Amable y educado, pero aplaza la decisión sin dar un motivo real.',
     answers:{
-      presentacion:{default:['Sí, dígame, aunque ahora mismo ando un poco liado.']},
+      presentacion:{default:['Sí, dígame, aunque ahora mismo ando un poco liado.','Usted dirá.']},
       investigacion:{
         pregunta_conocia:'Sí, algo había visto por ahí.',
         pregunta_antes:'Comprando en el súper cuando tocaba, sin mucho más.',
         pregunta_gusto:'Bien, sin problema, todo correcto.',
         pregunta_personas:'Somos dos, mi pareja y yo.',
-        default:['Ajá.']
+        default:['Ajá.','Vale, vale.','Ya te digo.']
       },
-      servicio:{default:['Ya, ya, suena bien.','Vale, vale.']},
-      cierre:{pregunta_plan:'No sé, el que sea más pequeño supongo.', default:['Ya veremos.','Puede ser.']}
+      servicio:{default:['Ya, ya, suena bien.','Vale, vale.','Mmm, ya.']},
+      cierre:{pregunta_plan:'No sé, el que sea más pequeño supongo.', default:['Ya veremos.','Puede ser.','No sé, la verdad.']}
     },
     objections:[
       {id:'rechazo_producto_extra', phase:'servicio', category:'Producto no solicitado', text:'Cafetera ya tengo, no estoy interesado por ahora.', hint:'No hace falta tenerla ahora, queda en su stock virtual y la pide cuando quiera en un próximo reparto.', kw:['stock virtual','cuando quiera','proximo reparto','no hace falta ahora']},
