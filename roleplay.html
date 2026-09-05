@@ -156,26 +156,26 @@ const PHASES = [
   {id:'presentacion', name:'1. Presentación', items:[
     {id:'saluda_identifica', label:'Se identifica y menciona Aquaservice', kw:['aquaservice']},
     {id:'buen_momento', label:'Pregunta si es buen momento para hablar', kw:['buen momento','le pillo bien','tiene un minuto','puede hablar ahora','es mal momento','tiene un momento']},
-    {id:'confirma_decisor', label:'Confirma que habla con quien decide', kw:['usted decide','toma la decision','quien decide','autorizo la prueba','decides tu','mandas tu','tu decides']}
+    {id:'confirma_decisor', label:'Confirma que habla con quien decide', kw:['usted decide','toma la decision','quien decide','autorizo la prueba','decides tu','mandas tu','tu decides','consultarlo con nadie','la ultima palabra']}
   ]},
   {id:'investigacion', name:'2. Investigación (I+D)', items:[
-    {id:'pregunta_conocia', label:'Pregunta si conocían Aquaservice', kw:['nos conocia','conociais aquaservice','sabiais de nosotros','les sonaba','nos conociais','conociais la marca']},
+    {id:'pregunta_conocia', label:'Pregunta si conocían Aquaservice', kw:['nos conocia','conociais aquaservice','sabiais de nosotros','les sonaba','nos conociais','conociais la marca','conocias aquaservice','experiencia previa con aquaservice']},
     {id:'pregunta_antes', label:'Pregunta cómo se organizaban antes', kw:['como se organizaban','como comprabais el agua','que haciais antes','de donde sacabais el agua','como lo haciais antes','como os apanabais']},
-    {id:'pregunta_gusto', label:'Pregunta qué les ha gustado de la prueba', kw:['ha gustado','que tal la prueba','que tal la experiencia','ha parecido','que tal con el dispensador','que tal con la fuente','que tal va todo']},
+    {id:'pregunta_gusto', label:'Pregunta qué les ha gustado de la prueba', kw:['ha gustado','que tal la prueba','que tal la experiencia','ha parecido','que tal con el dispensador','que tal con la fuente','que tal va todo','de su agrado','que tal os habia ido','que tal les ha ido']},
     {id:'pregunta_personas', label:'Pregunta cuántas personas hay en casa', kw:['cuantas personas','cuantos sois','cuantos en casa','personas en el hogar','cuantos vivis','cuantos hay en casa']}
   ]},
   {id:'servicio', name:'3. Servicio (catálogo y valor)', items:[
-    {id:'sostenibilidad', label:'Menciona sostenibilidad / cuidado del planeta', kw:['sostenib','medio ambiente','planeta','sin residuos','reciclam','huella']},
+    {id:'sostenibilidad', label:'Menciona sostenibilidad / cuidado del planeta', kw:['sostenib','medio ambiente','planeta','sin residuos','reciclam','huella','no generar plastico','reutilizamos los envases','economia circular']},
     {id:'reparto_programado', label:'Explica el reparto programado (cada 28 días)', kw:['28 dias','cuatro semanas','reparto programado','cada 4 semanas','cada veintiocho']},
-    {id:'urgencia', label:'Menciona el servicio de urgencia 24/48h', kw:['servicio de urgencia','24 horas','48 horas','urgente','veinticuatro','cuarenta y ocho']},
+    {id:'urgencia', label:'Menciona el servicio de urgencia 24/48h', kw:['servicio de urgencia','24 horas','48 horas','urgente','veinticuatro','cuarenta y ocho','entrega urgente']},
     {id:'app', label:'Menciona la app de autogestión', kw:['aplicacion','la app','desde el movil','autogestion','autogestionas']}
   ], negative:{id:'no_cede_precio', label:'No da el precio antes de exponer el valor', kw:['precio','cuesta','euros al mes','cuanto vale','cuanto cuesta','euros al']}},
   {id:'cierre', name:'4. Promoción y cierre', items:[
     {id:'precio_estandar', label:'Da el precio estándar de referencia', kw:['15 euros','quince euros','precio estandar','sin promocion','precio normal']},
     {id:'plan_ahorro', label:'Presenta el Plan Ahorro Familiar / promoción', kw:['plan ahorro','plan familiar','le presento la promocion','activamos la promocion','con la promocion','esta promocion','tenemos una promocion']},
-    {id:'elimina_deposito', label:'Ofrece eliminar el depósito', kw:['sin deposito','no pagaria deposito','quito el deposito','elimino el deposito','eliminamos el deposito','no paga deposito','sin fianza','deposito gratis','no tendria que pagar deposito']},
-    {id:'pregunta_plan', label:'Pregunta qué plan de consumo prefiere', kw:['cuantas botellas','que plan prefiere','plan de 4','plan de 3','cuantas unidades','el de cuatro o el de tres','cuantas garrafas']},
-    {id:'cierre_compromiso', label:'Cierra pidiendo el compromiso', kw:['le parece bien','empezamos','lo dejamos hecho','firmamos','activamos el servicio','damos de alta','damos por hecho']}
+    {id:'elimina_deposito', label:'Ofrece eliminar el depósito', kw:['sin deposito','no pagaria deposito','quito el deposito','elimino el deposito','eliminamos el deposito','no paga deposito','sin fianza','deposito gratis','no tendria que pagar deposito','no tendria que pagar nada por el dispensador','bajamos a 0','cedido gratis','no cobramos ni alquiler','quitar la fianza','quitar manual la fianza']},
+    {id:'pregunta_plan', label:'Pregunta qué plan de consumo prefiere', kw:['cuantas botellas','que plan prefiere','plan de 4','plan de 3','cuantas unidades','el de cuatro o el de tres','cuantas garrafas','como ves cuatro botellas','se lo activo con']},
+    {id:'cierre_compromiso', label:'Cierra pidiendo el compromiso', kw:['le parece bien','te parece bien','empezamos','lo dejamos hecho','firmamos','activamos el servicio','damos de alta','damos por hecho']}
   ]}
 ];
 
@@ -240,6 +240,47 @@ const PROFILES = [
       {id:'acostumbrado_super', phase:'investigacion', category:'Comodidad', text:'Es que estoy acostumbrado a comprar mi agua en el súper, no quiero complicarme.', hint:'Empatiza y muestra que el servicio elimina justo esa tarea: comprar, cargar y transportar.', kw:['comodidad','te lo llevamos','nosotros nos encargamos','no tienes que','te ahorras','sin esfuerzo']},
       {id:'sin_sitio', phase:'servicio', category:'Espacio e instalación', text:'Es que no tengo mucho sitio en la cocina para un dispensador.', hint:'Muestra la gama de modelos compactos o de sobremesa adaptados a cualquier cocina.', kw:['compacto','modelos','tamano','sobremesa','se adapta','distintos tamanos']},
       {id:'sin_tiempo', phase:'cierre', category:'Aplazamiento', text:'No tengo tiempo ahora para pensarlo, ya me apunto otro día.', hint:'Es una objeción de aplazamiento: propone cerrarlo ahora en dos minutos, sin presionar.', kw:['dos minutos','rapido','ahora mismo','no le quito mas tiempo','fecha concreta','un momento']}
+    ]
+  },
+  {
+    id:'detallista', name:'Cliente detallista', subtitle:'Cordial pero exhaustivo: quiere verificar cada condición antes de decidir.',
+    answers:{
+      presentacion:{default:['Sí, dígame, aunque le aviso que voy a preguntar bastante.']},
+      investigacion:{
+        pregunta_conocia:'Sí, ya había oído hablar, pero quiero saber bien todos los detalles antes de nada.',
+        pregunta_antes:'Comprábamos en el súper, pero cada vez me fío menos de cambiar de proveedor sin mirarlo bien.',
+        pregunta_gusto:'Bien, aunque tengo varias dudas que quiero resolver antes de seguir.',
+        pregunta_personas:'Somos dos en casa.',
+        default:['Ajá, sigo.','Vale, apunto eso.']
+      },
+      servicio:{default:['Entiendo, ¿y eso cómo funciona exactamente?','Vale, pero necesito estar seguro de eso.']},
+      cierre:{pregunta_plan:'Pues iría bien con el más pequeño, para no comprometerme de más.', default:['De acuerdo, pero quiero tenerlo todo claro por escrito.','Vale, sigo con dudas pero continúa.']}
+    },
+    objections:[
+      {id:'camion_no_entra', phase:'servicio', category:'Logística', text:'Es que la ubicación de mi casa está en una calle estrecha donde el camión no entra.', hint:'El camión puede entrar perfectamente, y si no, se entrega con carretilla de mano desde donde pare.', kw:['carretilla','puede entrar','sin problema','no hace falta que entre']},
+      {id:'pago_efectivo', phase:'cierre', category:'Forma de pago', text:'¿Y cómo se paga? ¿Se paga en efectivo?', hint:'Se deja pagado el primer reparto con tarjeta o Bizum, y los siguientes se cargan en la cuenta que prefiera.', kw:['tarjeta','bizum','numero de cuenta','cuenta bancaria','domiciliado']},
+      {id:'volumen_no_necesario', phase:'cierre', category:'Compromiso de volumen', text:'¿Para qué quiero tres garrafas al mes si no me las voy a beber?', hint:'Puede acumular lo que sobre, o pausar el reparto por un pequeño coste sin pagar botellas ese mes.', kw:['acumular','pausar el reparto','flexible','ajustamos el plan']},
+      {id:'subidas_precio', phase:'cierre', category:'Confianza en el precio', text:'Ya me pasó con otro proveedor: empecé pagando 28 y acabé pagando 34. Quiero saber que no va a haber subidas.', hint:'El precio es fijo, solo baja con promociones; como mucho una revisión anual por IPC.', kw:['precio fijo','no sube','revision anual','ipc']},
+      {id:'letra_pequena', phase:'cierre', category:'Confianza en el contrato', text:'Es que luego en el contrato vienen veintidós hojas que nadie se lee.', hint:'El contrato son dos páginas, resumido, y se lo puede mandar por WhatsApp para que lo tenga por escrito.', kw:['dos paginas','resumido','por whatsapp','se lo mando']}
+    ]
+  },
+  {
+    id:'evasivo', name:'Cliente evasivo', subtitle:'Amable y educado, pero aplaza la decisión sin dar un motivo real.',
+    answers:{
+      presentacion:{default:['Sí, dígame, aunque ahora mismo ando un poco liado.']},
+      investigacion:{
+        pregunta_conocia:'Sí, algo había visto por ahí.',
+        pregunta_antes:'Comprando en el súper cuando tocaba, sin mucho más.',
+        pregunta_gusto:'Bien, sin problema, todo correcto.',
+        pregunta_personas:'Somos dos, mi pareja y yo.',
+        default:['Ajá.']
+      },
+      servicio:{default:['Ya, ya, suena bien.','Vale, vale.']},
+      cierre:{pregunta_plan:'No sé, el que sea más pequeño supongo.', default:['Ya veremos.','Puede ser.']}
+    },
+    objections:[
+      {id:'rechazo_producto_extra', phase:'servicio', category:'Producto no solicitado', text:'Cafetera ya tengo, no estoy interesado por ahora.', hint:'No hace falta tenerla ahora, queda en su stock virtual y la pide cuando quiera en un próximo reparto.', kw:['stock virtual','cuando quiera','proximo reparto','no hace falta ahora']},
+      {id:'no_es_el_momento', phase:'cierre', category:'Aplazamiento sin motivo', text:'Me lo tengo que pensar, ahora mismo no es el momento.', hint:'Objeción dura de aplazamiento sin motivo concreto — en la llamada real el comercial no logró rebatirla. Prueba a acotar un compromiso pequeño en vez de insistir en cerrarlo todo ahora.', kw:['lo dejamos con la prueba','sin compromiso','no pasa nada','le llamo en unos dias']}
     ]
   }
 ];
