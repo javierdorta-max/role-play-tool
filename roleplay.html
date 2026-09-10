@@ -312,133 +312,98 @@
       return text;
     }
 
+    // Coincidencia flexible por tokens (palabras clave sueltas dentro de la frase)
     function matchesAny(textNorm, keywords) {
-      return keywords.some(kw => textNorm.includes(norm(kw)));
+      return keywords.some(kw => {
+        const normKw = norm(kw);
+        if (textNorm.includes(normKw)) return true;
+        // Si es una frase compuesta, permite coincidencia si contiene los términos clave
+        const words = normKw.split(' ').filter(w => w.length > 3);
+        if (words.length > 1) {
+          return words.every(w => textNorm.includes(w));
+        }
+        return false;
+      });
     }
 
     const checklistFases = [
       {
         fase: 1,
         titulo: "Presentación",
+        transicionTexto: "Entendido... Y cuénteme, ¿cómo nos han conocido o cómo se organizaban hasta ahora con el agua?",
         items: [
           { id: "saludo", desc: "Genera buen clima e identificación", keywords: [
-              "hola", "buenas", "que tal", "soy", "de aquaservice", "le llamaba", 
-              "preguntaba por", "buen momento", "molesto", "buenos dias", "buenas tardes", 
-              "mi nombre es", "le hablo de", "disfrutando una prueba", "gratuita", 
-              "interrumpo", "tiene un minuto", "esta ocupado", "le pillo mal", 
-              "la familia", "como se encuentra", "le llamo de"
+              "hola", "buenas", "tal", "aquaservice", "llamaba", "preguntaba", "momento", "molesto", "dias", "tardes", 
+              "nombre", "prueba", "gratuita", "interrumpo", "minuto", "ocupado", "pillo", "familia", "encuentra"
           ]},
           { id: "autorizador", desc: "Confirma autorizador de prueba/decisor", keywords: [
-              "autorizo", "toma la decision", "mando yo", "decide", "usted el que", 
-              "comparte la decision", "hablo con el titular", "encargado de la casa", 
-              "persona responsable", "autorizo la prueba", "quien decide", 
-              "lo decidimos entre los dos", "usted quien se encarga"
+              "autorizo", "decision", "mando", "decide", "usted", "titular", "encargado", "responsable", "encarga"
           ]}
         ]
       },
       {
         fase: 2,
         titulo: "Investigación (I+D)",
+        transicionTexto: "De acuerdo. Y con todo esto que me comenta, ¿cómo funciona exactamente el servicio que ofrecen?",
         items: [
           { id: "conocimiento", desc: "Indaga conocimiento previo de marca", keywords: [
-              "nos conocia", "nos conociais", "tele", "camion", "anuncios", 
-              "vecino", "furgoneta", "mundial", "habia escuchado hablar", 
-              "nos habia visto", "publicidad", "redes sociales", "internet", 
-              "algun familiar", "en la calle", "antes de la prueba"
+              "conocia", "tele", "camion", "anuncios", "vecino", "furgoneta", "mundial", "escuchado", "visto", "publicidad", "redes", "internet", "calle"
           ]},
           { id: "habito", desc: "Hábito de compra y competidores", keywords: [
-              "supermercado", "compraba", "marca", "mercadona", "carrefour", 
-              "font vella", "bezoya", "solan", "acarrear", "coche", "agua embotellada", 
-              "grifo", "osmosis", "jarras", "cargar peso", "plastico", "donde compraba", 
-              "que agua bebe", "antes de probarnos", "como lo hacia", "como se organizaban"
+              "supermercado", "super", "compraba", "marca", "mercadona", "carrefour", "font vella", "bezoya", "solan", "acarrear", "coche", "embotellada", "grifo", "osmosis", "jarras", "cargar", "peso", "plastico"
           ]},
           { id: "miembros", desc: "Miembros y estimación de consumo", keywords: [
-              "cuantos sois", "cuatro", "tres", "dos", "personas", "litros al mes", 
-              "garrafas al mes", "garrafa semanal", "oficina", "cuantas personas", 
-              "en casa", "vivienda", "familia", "unidad familiar", "consumo medio", 
-              "botellas de litro y medio", "pack de 6", "cuantos viven en casa"
+              "cuantos", "cuatro", "tres", "dos", "personas", "litros", "garrafas", "semanal", "oficina", "casa", "vivienda", "familia", "unidad", "consumo"
           ]},
           { id: "experiencia", desc: "Puntos fuertes de la prueba y calidad", keywords: [
-              "que tal la prueba", "mas ha gustado", "agua fresquita", "infusiones", 
-              "caliente", "residuo seco", "mineralizacion", "diuretica", "sodio", 
-              "salud", "comodidad", "sabor", "ligera", "cuidarse", "para cocinar", 
-              "cafe", "beber mas agua", "que le ha parecido", "su experiencia"
+              "prueba", "gustado", "fresquita", "infusiones", "caliente", "residuo", "mineralizacion", "diuretica", "sodio", "salud", "comodidad", "sabor", "ligera", "cuidarse", "cocinar", "cafe"
           ]}
         ]
       },
       {
         fase: 3,
         titulo: "Servicio y Sostenibilidad",
+        transicionTexto: "Suena bien. Bueno, ¿y todo esto en qué condiciones o precios se queda exactamente?",
         items: [
           { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: [
-              "28 dias", "veintiocho dias", "4 semanas", "cuatro semanas", "reparto programado", 
-              "suben", "primer piso", "puerta de casa", "olvidas de acarrear", "cada mes", 
-              "una vez al mes", "se lo llevamos", "no tiene que cargar", "te lo dejamos en la puerta", 
-              "olvidese de ir al super", "repartidor habitual", "ruta asignada", "subimos las garrafas", 
-              "directamente en su domicilio"
+              "28", "semanas", "cuatro", "programado", "suben", "piso", "puerta", "acarrear", "mes", "llevamos", "cargar", "ruta", "repartidor", "domicilio"
           ]},
           { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: [
-              "urgentes", "urgencia", "dos entregas", "2 entregas", "24 48 horas", "48h", 
-              "te quedes sin agua", "pedido extraordinario", "si le hace falta mas", 
-              "entregas gratuitas", "aviso urgente", "antes de 48 horas", "no se va a quedar sin agua", 
-              "dos avisos al ano", "por si acaso"
+              "urgentes", "urgencia", "entregas", "horas", "48h", "extraordinario", "gratuitas", "aviso", "falta"
           ]},
           { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: [
-              "garantia de por vida", "termostato", "destornillador", "llave", "grifo azul", 
-              "grifo rojo", "empujar atras", "acero inoxidable", "espacio", "micro", "84 cm", 
-              "sobremesa", "estanteria", "mantenimiento incluido", "limpieza anual", "higienizacion", 
-              "se rompe se lo cambiamos", "modelo compacto", "no necesita instalacion", "solo un enchufe", 
-              "sin obras", "seguridad para ninos", "temperatura regulable", "a su gusto"
+              "garantia", "termostato", "destornillador", "llave", "azul", "rojo", "atras", "inoxidable", "espacio", "micro", "84", "sobremesa", "estanteria", "mantenimiento", "higienizacion", "enchufe", "obras", "ninos", "regulable"
           ]},
           { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: [
-              "reciclar", "plastico", "botellas vacias", "huella", "sostenible", "policarbonato", 
-              "cuidar el planeta", "economia circular", "carbono neutro", "cero residuos", 
-              "nos llevamos los envases", "reutilizamos", "reduccion de plastico", "medio ambiente", 
-              "no genera basura", "botellas retornables", "lavamos y desinfectamos"
+              "reciclar", "plastico", "vacias", "huella", "sostenible", "policarbonato", "planeta", "circular", "neutro", "residuos", "envases", "reutilizamos", "retornables"
           ]},
           { id: "app", desc: "Autogestión integral por la APP", keywords: [
-              "aplicacion", "app", "movil", "autogestionar", "pausar el reparto", "bajar el plan", 
-              "subir el plan", "mensaje al repartidor", "desde el telefono", "area de cliente", 
-              "gestionar sus pedidos", "ver sus facturas", "cambiar la fecha", "avisar si no esta"
+              "aplicacion", "app", "movil", "autogestionar", "pausar", "bajar", "subir", "mensaje", "telefono", "cliente", "facturas"
           ]}
         ]
       },
       {
         fase: 4,
         titulo: "Promoción y Cierre",
+        transicionTexto: "Perfecto, me queda claro. Procedamos a tomar los datos.",
         items: [
           { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: [
-              "fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "no te cobro", 
-              "elimino el deposito", "conozco tu casa", "deposito retornable", "se lo quito", 
-              "se lo bonifico", "coste cero por la maquina", "cesion gratuita", "maquina en deposito", 
-              "sin coste inicial", "no tiene que pagar los 79"
+              "fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "cobro", "elimino", "casa", "retornable", "quito", "bonifico", "cesion"
           ]},
           { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: [
-              "15", "quince euros", "cuota de servicio", "te la quito", "tres meses gratis", 
-              "coste cero", "para siempre", "mantenimiento gratuito", "sin cuota mensual", 
-              "15 euros al mes de ahorro", "servicio tecnico gratis", "no cobramos alquiler"
+              "15", "quince", "cuota", "servicio", "quito", "gratis", "cero", "mantenimiento", "ahorro", "alquiler"
           ]},
           { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: [
-              "plan ahorro", "3390", "3690", "2990", "4190", "botellines", "50 cl", "caja de aguitas", 
-              "combina", "plan familiar", "se adapta a su consumo", "pagara solo por lo que beba", 
-              "3 bidones", "4 bidones", "garrafas de 20 litros", "botellas de medio litro", 
-              "botellas pequenas", "formato ahorro"
+              "plan", "3390", "3690", "2990", "4190", "botellines", "50", "aguitas", "combina", "familiar", "adapta", "bidones", "garrafas", "pequenas"
           ]},
           { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: [
-              "permanencia", "6meses", "12meses", "sin ataduras", "contrato de un ano", 
-              "seis meses de prueba", "medio ano", "minimo de permanencia", "no hay letra pequena", 
-              "darse de baja", "si se muda se lo llevamos"
+              "permanencia", "6meses", "12meses", "ataduras", "ano", "seis", "prueba", "medio", "minimo", "contrato"
           ]},
           { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: [
-              "iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "dia 10", 
-              "numero de cuenta", "recibo domiciliado", "pago seguro", "primer cobro", 
-              "se lo paso por el banco", "facturamos a mes vencido"
+              "iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "10", "recibo", "domiciliado", "pago", "banco"
           ]},
           { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: [
-              "aquamigo", "10%", "descuento", "regalar agua", "botellas de cortesia", 
-              "regalo 4 botellas", "este mes te lo regalo", "traer a un amigo", 
-              "descuento en factura", "plan amigo", "le dejo unas botellas hoy", 
-              "hasta el primer reparto", "pack de bienvenida"
+              "aquamigo", "10", "descuento", "regalar", "cortesia", "regalo", "amigo", "bienvenida", "hoy"
           ]}
         ]
       }
@@ -455,36 +420,36 @@
         nombre: "Ricardo",
         saludo: "Hola, sí soy yo. ¿Quién es?",
         objeciones: [
-          { fase: 2, triggerItem: "experiencia", texto: "El agua está bien, pero mis hijos están todo el día jugando con los grifos y tirando agua.", resolvedBy: ["grifo azul", "seguridad infantil", "grifo de abajo", "seguridad para ninos"] },
-          { fase: 4, triggerItem: "elimina_fianza", texto: "A mí lo que me echa para atrás son los 79€ de fianza de la máquina, me parece carísimo.", resolvedBy: ["elimino el deposito", "no te cobro", "gratis", "presencialmente", "fianza", "cesion gratuita"] }
+          { fase: 2, triggerItem: "experiencia", texto: "El agua está bien, pero mis hijos están todo el día jugando con los grifos y tirando agua.", resolvedBy: ["azul", "seguridad", "ninos", "abajo"] },
+          { fase: 4, triggerItem: "elimina_fianza", texto: "A mí lo que me echa para atrás son los 79€ de fianza de la máquina, me parece carísimo.", resolvedBy: ["elimino", "deposito", "cobro", "gratis", "presencialmente", "fianza", "cesion"] }
         ]
       },
       esceptico: {
         nombre: "Escéptico",
         saludo: "Dígame, pero no me haga perder el tiempo que estoy ocupado.",
         objeciones: [
-          { fase: 3, triggerItem: "maquina", texto: "No me fío de los contratos, no quiero atarme a un año entero con ustedes.", resolvedBy: ["6meses", "sin ataduras", "seis meses", "seis meses de prueba", "medio ano"] }
+          { fase: 3, triggerItem: "maquina", texto: "No me fío de los contratos, no quiero atarme a un año entero con ustedes.", resolvedBy: ["6meses", "ataduras", "seis", "prueba", "medio"] }
         ]
       },
       habito: {
         nombre: "Hábito",
         saludo: "Hola, coménteme rápido.",
         objeciones: [
-          { fase: 2, triggerItem: "habito", texto: "Yo es que estoy acostumbrado a comprar mis garrafas en el súper cuando hago la compra y me apaño bien.", resolvedBy: ["acarrear", "peso", "comodidad", "puerta de casa", "olvidas", "cargar peso", "olvidese de ir al super"] }
+          { fase: 2, triggerItem: "habito", texto: "Yo es que estoy acostumbrado a comprar mis garrafas en el súper cuando hago la compra y me apaño bien.", resolvedBy: ["acarrear", "peso", "comodidad", "puerta", "olvidas", "cargar", "super"] }
         ]
       },
       detallista: {
         nombre: "Detallista",
         saludo: "Buenos días, le escucho.",
         objeciones: [
-          { fase: 3, triggerItem: "maquina", texto: "Probé el agua pero sale helada, para el invierno está demasiado fría.", resolvedBy: ["termostato", "destornillador", "llave", "girar", "temperatura regulable"] }
+          { fase: 3, triggerItem: "maquina", texto: "Probé el agua pero sale helada, para el invierno está demasiado fría.", resolvedBy: ["termostato", "destornillador", "llave", "girar", "regulable"] }
         ]
       },
       evasivo: {
         nombre: "Evasivo",
         saludo: "Hola, dígame qué quería.",
         objeciones: [
-          { fase: 4, triggerItem: "plan_ahorro", texto: "Bueno, mándamelo por correo y ya si eso me lo pienso otro día.", resolvedBy: ["cortesia", "regalo", "agendar", "descuento", "hoy", "pack de bienvenida", "le dejo unas botellas hoy"] }
+          { fase: 4, triggerItem: "plan_ahorro", texto: "Bueno, mándamelo por correo y ya si eso me lo pienso otro día.", resolvedBy: ["cortesia", "regalo", "agendar", "descuento", "hoy", "bienvenida"] }
         ]
       }
     };
@@ -684,7 +649,7 @@
           estado.faseActual++;
           setTimeout(() => {
             renderChecklist();
-            const msgAvance = `[Avanzamos a la ${checklistFases.find(f => f.fase === estado.faseActual).titulo}] De acuerdo, continúe.`;
+            const msgAvance = faseConfig.transicionTexto || "De acuerdo, entiendo. Continúe.";
             addMessage('bot', msgAvance);
             hablarBot(msgAvance);
           }, 700);
@@ -693,8 +658,14 @@
         }
       } else {
         if (!estado.objecionActiva) {
-          const respuestasMantenimiento = ["Le escucho.", "Ajá, entiendo.", "Cuénteme más sobre eso."];
-          const resp = respuestasMantenimiento[Math.floor(Math.random() * respuestasMantenimiento.length)];
+          const respuestasHumanas = {
+            1: ["Sí, dígame.", "Ajá, le escucho.", "Sí, soy yo."],
+            2: ["Comprendo.", "Ajá, tome nota de eso.", "Vale, entiendo.", "Sí, en casa somos bastantes."],
+            3: ["Ajá, ¿y cómo funciona eso?", "Vale, me parece bien.", "Entiendo el servicio, continúe."],
+            4: ["De acuerdo, ¿y qué opciones tenemos?", "Vale, cuénteme más del precio.", "Ajá, lo entiendo."]
+          };
+          const listaRespuesta = respuestasHumanas[estado.faseActual] || ["Le escucho."];
+          const resp = listaRespuesta[Math.floor(Math.random() * listaRespuesta.length)];
           setTimeout(() => {
             addMessage('bot', resp);
             hablarBot(resp);
