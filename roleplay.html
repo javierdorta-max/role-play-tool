@@ -298,11 +298,10 @@
         .trim();
 
       const numMap = {
-        "33 90": "3390", "33,90": "3390", "33.90": "3390", "treinta y tres noventa": "3390", "treinta y tres con noventa": "3390",
-        "36 90": "3690", "36,90": "3690", "36.90": "3690", "treinta y seis noventa": "3690",
-        "29 90": "2990", "29,90": "2990", "veintinueve noventa": "2990",
-        "15 euros": "15", "quince": "15", "79 euros": "79", "setenta y nueve": "79", "80 euros": "80", "ochenta": "80",
-        "6 meses": "6meses", "seis meses": "6meses", "12 meses": "12meses", "doce meses": "12meses", "un ano": "12meses"
+        "33 90": "3390", "33,90": "3390", "33.90": "3390", "treinta y tres noventa": "3390",
+        "36 90": "3690", "36,90": "3690", "36.90": "3690",
+        "15 euros": "15", "quince": "15", "79 euros": "79", "80 euros": "80",
+        "6 meses": "6meses", "seis meses": "6meses", "12 meses": "12meses", "doce meses": "12meses"
       };
 
       Object.keys(numMap).forEach(k => {
@@ -312,12 +311,10 @@
       return text;
     }
 
-    // Coincidencia flexible por tokens (palabras clave sueltas dentro de la frase)
     function matchesAny(textNorm, keywords) {
       return keywords.some(kw => {
         const normKw = norm(kw);
         if (textNorm.includes(normKw)) return true;
-        // Si es una frase compuesta, permite coincidencia si contiene los términos clave
         const words = normKw.split(' ').filter(w => w.length > 3);
         if (words.length > 1) {
           return words.every(w => textNorm.includes(w));
@@ -330,81 +327,55 @@
       {
         fase: 1,
         titulo: "Presentación",
-        transicionTexto: "Entendido... Y cuénteme, ¿cómo nos han conocido o cómo se organizaban hasta ahora con el agua?",
         items: [
-          { id: "saludo", desc: "Genera buen clima e identificación", keywords: [
-              "hola", "buenas", "tal", "aquaservice", "llamaba", "preguntaba", "momento", "molesto", "dias", "tardes", 
-              "nombre", "prueba", "gratuita", "interrumpo", "minuto", "ocupado", "pillo", "familia", "encuentra"
+          { id: "saludo", desc: "Identificación, empresa y gancho inicial", keywords: [
+              "hola", "buenas", "soy", "aquaservice", "prueba", "disfrutando", "encargado", "responsable", 
+              "prioritarias", "ventajosas", "encantar", "tutearos", "tutear", "jovenes"
           ]},
           { id: "autorizador", desc: "Confirma autorizador de prueba/decisor", keywords: [
-              "autorizo", "decision", "mando", "decide", "usted", "titular", "encargado", "responsable", "encarga"
+              "autorizo", "autorizo la prueba", "decision", "mando", "decide", "usted", "titular", "responsable"
           ]}
         ]
       },
       {
         fase: 2,
         titulo: "Investigación (I+D)",
-        transicionTexto: "De acuerdo. Y con todo esto que me comenta, ¿cómo funciona exactamente el servicio que ofrecen?",
         items: [
           { id: "conocimiento", desc: "Indaga conocimiento previo de marca", keywords: [
-              "conocia", "tele", "camion", "anuncios", "vecino", "furgoneta", "mundial", "escuchado", "visto", "publicidad", "redes", "internet", "calle"
+              "conocía", "conocia", "conociais", "tele", "camion", "anuncios", "vecino", "furgoneta", "escuchado", "visto"
           ]},
-          { id: "habito", desc: "Hábito de compra y competidores", keywords: [
-              "supermercado", "super", "compraba", "marca", "mercadona", "carrefour", "font vella", "bezoya", "solan", "acarrear", "coche", "embotellada", "grifo", "osmosis", "jarras", "cargar", "peso", "plastico"
+          { id: "habito", desc: "Hábito de compra previo (dolor de cargar)", keywords: [
+              "supermercado", "super", "compraba", "marca", "mercadona", "carrefour", "acarrear", "coche", "embotellada", "grifo", "jarras", "cargar", "peso"
           ]},
-          { id: "miembros", desc: "Miembros y estimación de consumo", keywords: [
-              "cuantos", "cuatro", "tres", "dos", "personas", "litros", "garrafas", "semanal", "oficina", "casa", "vivienda", "familia", "unidad", "consumo"
+          { id: "miembros", desc: "Consenso pedagógico (1 Litro/persona/día)", keywords: [
+              "cuantos", "cuatro", "tres", "dos", "personas", "litro", "litros", "semanal", "botellas", "3 botellas", "4 botellas", "vacia"
           ]},
-          { id: "experiencia", desc: "Puntos fuertes de la prueba y calidad", keywords: [
-              "prueba", "gustado", "fresquita", "infusiones", "caliente", "residuo", "mineralizacion", "diuretica", "sodio", "salud", "comodidad", "sabor", "ligera", "cuidarse", "cocinar", "cafe"
+          { id: "experiencia", desc: "Puntos fuertes de la prueba", keywords: [
+              "prueba", "gustado", "fresquita", "infusiones", "caliente", "comodidad", "sabor", "ligera", "cuidarse", "salud"
           ]}
         ]
       },
       {
         fase: 3,
         titulo: "Servicio y Sostenibilidad",
-        transicionTexto: "Suena bien. Bueno, ¿y todo esto en qué condiciones o precios se queda exactamente?",
         items: [
-          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: [
-              "28", "semanas", "cuatro", "programado", "suben", "piso", "puerta", "acarrear", "mes", "llevamos", "cargar", "ruta", "repartidor", "domicilio"
-          ]},
-          { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: [
-              "urgentes", "urgencia", "entregas", "horas", "48h", "extraordinario", "gratuitas", "aviso", "falta"
-          ]},
-          { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: [
-              "garantia", "termostato", "destornillador", "llave", "azul", "rojo", "atras", "inoxidable", "espacio", "micro", "84", "sobremesa", "estanteria", "mantenimiento", "higienizacion", "enchufe", "obras", "ninos", "regulable"
-          ]},
-          { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: [
-              "reciclar", "plastico", "vacias", "huella", "sostenible", "policarbonato", "planeta", "circular", "neutro", "residuos", "envases", "reutilizamos", "retornables"
-          ]},
-          { id: "app", desc: "Autogestión integral por la APP", keywords: [
-              "aplicacion", "app", "movil", "autogestionar", "pausar", "bajar", "subir", "mensaje", "telefono", "cliente", "facturas"
-          ]}
+          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: ["28", "semanas", "programado", "suben", "piso", "puerta", "cocar", "mes", "llevamos"] },
+          { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: ["urgentes", "urgencia", "entregas", "horas", "48h", "gratuitas", "aviso"] },
+          { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: ["garantia", "termostato", "destornillador", "llave", "azul", "rojo", "espacio", "micro", "84", "sobremesa", "mantenimiento"] },
+          { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: ["reciclar", "plastico", "vacias", "sostenible", "planeta", "residuos", "envases"] },
+          { id: "app", desc: "Autogestión integral por la APP", keywords: ["aplicacion", "app", "movil", "autogestionar", "pausar", "bajar", "subir", "cliente"] }
         ]
       },
       {
         fase: 4,
         titulo: "Promoción y Cierre",
-        transicionTexto: "Perfecto, me queda claro. Procedamos a tomar los datos.",
         items: [
-          { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: [
-              "fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "cobro", "elimino", "casa", "retornable", "quito", "bonifico", "cesion"
-          ]},
-          { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: [
-              "15", "quince", "cuota", "servicio", "quito", "gratis", "cero", "mantenimiento", "ahorro", "alquiler"
-          ]},
-          { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: [
-              "plan", "3390", "3690", "2990", "4190", "botellines", "50", "aguitas", "combina", "familiar", "adapta", "bidones", "garrafas", "pequenas"
-          ]},
-          { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: [
-              "permanencia", "6meses", "12meses", "ataduras", "ano", "seis", "prueba", "medio", "minimo", "contrato"
-          ]},
-          { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: [
-              "iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "10", "recibo", "domiciliado", "pago", "banco"
-          ]},
-          { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: [
-              "aquamigo", "10", "descuento", "regalar", "cortesia", "regalo", "amigo", "bienvenida", "hoy"
-          ]}
+          { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: ["fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "cobro", "elimino"] },
+          { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: ["15", "quince", "cuota", "servicio", "quito", "gratis", "cero"] },
+          { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: ["plan", "3390", "3690", "2990", "4190", "botellines", "50", "aguitas", "combina"] },
+          { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: ["permanencia", "6meses", "12meses", "ataduras", "ano", "seis", "prueba"] },
+          { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: ["iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "10"] },
+          { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: ["aquamigo", "10", "descuento", "regalar", "cortesia", "regalo", "amigo"] }
         ]
       }
     ];
@@ -418,38 +389,38 @@
     const perfilesConfig = {
       ricardo: {
         nombre: "Ricardo",
-        saludo: "Hola, sí soy yo. ¿Quién es?",
+        saludo: "Hola, dígame.",
         objeciones: [
           { fase: 2, triggerItem: "experiencia", texto: "El agua está bien, pero mis hijos están todo el día jugando con los grifos y tirando agua.", resolvedBy: ["azul", "seguridad", "ninos", "abajo"] },
-          { fase: 4, triggerItem: "elimina_fianza", texto: "A mí lo que me echa para atrás son los 79€ de fianza de la máquina, me parece carísimo.", resolvedBy: ["elimino", "deposito", "cobro", "gratis", "presencialmente", "fianza", "cesion"] }
+          { fase: 4, triggerItem: "elimina_fianza", texto: "A mí lo que me echa para atrás son los 79€ de fianza de la máquina, me parece carísimo.", resolvedBy: ["elimino", "deposito", "cobro", "gratis", "presencialmente", "fianza"] }
         ]
       },
       esceptico: {
         nombre: "Escéptico",
-        saludo: "Dígame, pero no me haga perder el tiempo que estoy ocupado.",
+        saludo: "Hola, dígame.",
         objeciones: [
-          { fase: 3, triggerItem: "maquina", texto: "No me fío de los contratos, no quiero atarme a un año entero con ustedes.", resolvedBy: ["6meses", "ataduras", "seis", "prueba", "medio"] }
+          { fase: 3, triggerItem: "maquina", texto: "No me fío de los contratos, no quiero atarme a un año entero con ustedes.", resolvedBy: ["6meses", "ataduras", "seis", "prueba"] }
         ]
       },
       habito: {
         nombre: "Hábito",
-        saludo: "Hola, coménteme rápido.",
+        saludo: "Hola, dígame.",
         objeciones: [
           { fase: 2, triggerItem: "habito", texto: "Yo es que estoy acostumbrado a comprar mis garrafas en el súper cuando hago la compra y me apaño bien.", resolvedBy: ["acarrear", "peso", "comodidad", "puerta", "olvidas", "cargar", "super"] }
         ]
       },
       detallista: {
         nombre: "Detallista",
-        saludo: "Buenos días, le escucho.",
+        saludo: "Hola, dígame.",
         objeciones: [
-          { fase: 3, triggerItem: "maquina", texto: "Probé el agua pero sale helada, para el invierno está demasiado fría.", resolvedBy: ["termostato", "destornillador", "llave", "girar", "regulable"] }
+          { fase: 3, triggerItem: "maquina", texto: "Probé el agua pero sale helada, para el invierno está demasiado fría.", resolvedBy: ["termostato", "destornillador", "llave", "girar"] }
         ]
       },
       evasivo: {
         nombre: "Evasivo",
-        saludo: "Hola, dígame qué quería.",
+        saludo: "Hola, dígame.",
         objeciones: [
-          { fase: 4, triggerItem: "plan_ahorro", texto: "Bueno, mándamelo por correo y ya si eso me lo pienso otro día.", resolvedBy: ["cortesia", "regalo", "agendar", "descuento", "hoy", "bienvenida"] }
+          { fase: 4, triggerItem: "plan_ahorro", texto: "Bueno, mándamelo por correo y ya si eso me lo pienso otro día.", resolvedBy: ["cortesia", "regalo", "agendar", "descuento", "hoy"] }
         ]
       }
     };
@@ -458,6 +429,7 @@
       comercial: "",
       perfilKey: "ricardo",
       faseActual: 1,
+      pasoConversacional: 0,
       itemsCompletados: new Set(),
       objecionesResueltas: 0,
       objecionesTotales: 0,
@@ -565,6 +537,7 @@
       estado.comercial = nombre;
       estado.perfilKey = document.getElementById('selectPerfil').value;
       estado.faseActual = 1;
+      estado.pasoConversacional = 0;
       estado.itemsCompletados.clear();
       estado.objecionesResueltas = 0;
       estado.objecionesTotales = 0;
@@ -578,7 +551,7 @@
 
       renderChecklist();
       
-      const saludoBot = perfilesConfig[estado.perfilKey].saludo;
+      const saludoBot = perfilesConfig[estado.perfilKey].saludo; // "Hola, dígame."
       addMessage('bot', saludoBot);
       hablarBot(saludoBot);
     }
@@ -595,11 +568,13 @@
       addMessage('user', texto);
       const textNorm = norm(texto);
 
+      // 1. Penalización
       if (estado.faseActual < 4 && matchesAny(textNorm, itemNegativo.keywords)) {
         estado.penalizadoPrecio = true;
         document.getElementById('penaltyNotice').style.display = 'block';
       }
 
+      // 2. Resolver Objeción Activa
       if (estado.objecionActiva) {
         if (matchesAny(textNorm, estado.objecionActiva.resolvedBy)) {
           estado.objecionesResueltas++;
@@ -610,6 +585,7 @@
         }
       }
 
+      // 3. Marcar ítems del checklist
       const faseConfig = checklistFases.find(f => f.fase === estado.faseActual);
       faseConfig.items.forEach(item => {
         if (!estado.itemsCompletados.has(item.id)) {
@@ -621,6 +597,39 @@
 
       renderChecklist();
 
+      // 4. MÁQUINA DE ESTADOS DE DIÁLOGO NATURAL (Respuestas reactivas)
+      let respuestaCliente = "";
+
+      if (estado.faseActual === 1) {
+        if (matchesAny(textNorm, ["autorizo", "decision", "mando", "decide", "usted", "titular"])) {
+          respuestaCliente = "Ah, sí, soy yo el que la autorizó y el que toma las decisiones en casa. ¿Dígame?";
+          estado.pasoConversacional = 2;
+        } else if (matchesAny(textNorm, ["aquaservice", "prueba", "prioritarias", "ventajosas", "encantar"])) {
+          respuestaCliente = "Ah, sí, de Aquaservice. ¿Qué pasó?";
+          estado.pasoConversacional = 1;
+        } else {
+          respuestaCliente = "Sí, dígame, ¿de dónde me llama exactamente?";
+        }
+      } 
+      else if (estado.faseActual === 2) {
+        if (matchesAny(textNorm, ["conocía", "conocia", "tele", "camion", "anuncios", "vecino"])) {
+          respuestaCliente = "Sí, claro que os conocía, de ver los camiones por la calle y los anuncios.";
+        } else if (matchesAny(textNorm, ["supermercado", "super", "compraba", "acarrear", "coche", "cargar", "peso"])) {
+          respuestaCliente = "Pues antes íbamos al supermercado a cargar con las garrafas en el coche, un rollo la verdad.";
+        } else if (matchesAny(textNorm, ["cuantos", "litro", "litros", "personas", "botellas"])) {
+          respuestaCliente = "Pues en casa somos 4 personas y la verdad es que la botella que nos dejasteis casi la hemos terminado.";
+        } else {
+          respuestaCliente = "Pues la prueba la verdad que bien, el agua sale muy fresquita. ¿Qué más quería consultar?";
+        }
+      }
+      else if (estado.faseActual === 3) {
+        respuestaCliente = "Comprendo... ¿Y el servicio cómo funciona con los repartos y la máquina?";
+      }
+      else if (estado.faseActual === 4) {
+        respuestaCliente = "Entendido. A ver, cuénteme qué precios y qué promoción me propone exactamente.";
+      }
+
+      // 5. Comprobar Objeción Dinámica
       const perfilObjeciones = perfilesConfig[estado.perfilKey].objeciones;
       const objTrigger = perfilObjeciones.find(o => o.fase === estado.faseActual && !o.disparada && estado.itemsCompletados.has(o.triggerItem));
 
@@ -636,7 +645,13 @@
         return;
       }
 
-      evaluarProgresoFase();
+      // Emitir respuesta natural y evaluar avance
+      setTimeout(() => {
+        addMessage('bot', respuestaCliente);
+        hablarBot(respuestaCliente, () => {
+          evaluarProgresoFase();
+        });
+      }, 600);
     }
 
     function evaluarProgresoFase() {
@@ -647,29 +662,9 @@
       if (pctFase >= 75 && !estado.objecionActiva) {
         if (estado.faseActual < 4) {
           estado.faseActual++;
-          setTimeout(() => {
-            renderChecklist();
-            const msgAvance = faseConfig.transicionTexto || "De acuerdo, entiendo. Continúe.";
-            addMessage('bot', msgAvance);
-            hablarBot(msgAvance);
-          }, 700);
+          renderChecklist();
         } else {
           setTimeout(finalizarSimulacion, 1000);
-        }
-      } else {
-        if (!estado.objecionActiva) {
-          const respuestasHumanas = {
-            1: ["Sí, dígame.", "Ajá, le escucho.", "Sí, soy yo."],
-            2: ["Comprendo.", "Ajá, tome nota de eso.", "Vale, entiendo.", "Sí, en casa somos bastantes."],
-            3: ["Ajá, ¿y cómo funciona eso?", "Vale, me parece bien.", "Entiendo el servicio, continúe."],
-            4: ["De acuerdo, ¿y qué opciones tenemos?", "Vale, cuénteme más del precio.", "Ajá, lo entiendo."]
-          };
-          const listaRespuesta = respuestasHumanas[estado.faseActual] || ["Le escucho."];
-          const resp = listaRespuesta[Math.floor(Math.random() * listaRespuesta.length)];
-          setTimeout(() => {
-            addMessage('bot', resp);
-            hablarBot(resp);
-          }, 800);
         }
       }
     }
