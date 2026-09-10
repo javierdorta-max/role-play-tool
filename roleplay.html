@@ -96,6 +96,12 @@
         display: grid;
         grid-template-columns: 1fr 360px;
         gap: 16px;
+        transition: all 0.3s ease;
+      }
+      .sim-layout.senior-mode {
+        grid-template-columns: 1fr; /* Ocupa todo el ancho si se oculta el panel */
+        max-width: 900px;
+        margin: 0 auto;
       }
     }
 
@@ -223,7 +229,7 @@
   </div>
 
   <div id="viewSetup" class="view active">
-    <div class="card" style="max-width: 520px; margin: 40px auto;">
+    <div class="card" style="max-width: 550px; margin: 40px auto;">
       <h2 style="margin-bottom: 16px;">Configuración de la Sesión</h2>
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <div>
@@ -231,18 +237,29 @@
           <input type="text" id="inputName" placeholder="Ej. Miguel Ángel" />
         </div>
         <div>
-          <label for="selectPerfil">Perfil de Cliente (Casos Reales de Campo):</label>
+          <label for="selectNivel">Nivel de Entrenamiento:</label>
+          <select id="selectNivel">
+            <option value="junior">Junior (Ver checklist y pistas en tiempo real)</option>
+            <option value="senior">Senior (Modo examen: sin pistas visuales)</option>
+          </select>
+        </div>
+        <div>
+          <label for="selectPerfil">Perfil de Cliente (14 Casos Reales de Drive):</label>
           <select id="selectPerfil">
             <option value="enrique">Enrique (Nietos liados, compara con garrafas 8L del súper)</option>
-            <option value="elizabeth">Elizabeth y Zacarías (Dolores de rodilla/mano, exigen salud)</option>
+            <option value="elizabeth">Elizabeth y Zacarías (Dolores rodilla/mano, exigen salud/policarbonato)</option>
             <option value="francisca">Francisca (Jubilada, asustada por los 79€ de fianza)</option>
             <option value="raquel">Raquel y Pareja (Falta de espacio en cocina/galería)</option>
             <option value="domingo">Domingo (Calle estrecha, niega 12 meses y teme subidas)</option>
-            <option value="juancarlos">Juan Carlos y Leticia (Impaciente, exige precios y pago directo)</option>
-            <option value="josecarlos">José Carlos (Pensión reducida de 700€, consume mucho en verano)</option>
-            <option value="antonio">Antonio y Dolores ("El manitas", peugeot 2008, 1L/persona/día)</option>
+            <option value="juancarlos">Juan Carlos y Leticia (Impaciente, exige precio y pago directo)</option>
+            <option value="josecarlos">José Carlos (Pensión 700€, rechaza por "perro/trampa")</option>
+            <option value="antonio">Antonio el Manitas (Peugeot 2008, consumo elevado)</option>
             <option value="josemanuel">José Manuel - Sanito90 (Sector seguros, pago 36.90€ hoy)</option>
             <option value="maricarmen">Mari Carmen (Dudas con "otra trampa" y cobro en mano)</option>
+            <option value="constantino">Constantino (Exige detalle 28 días, app y botellines)</option>
+            <option value="eneli">Eneli (Caso Rubén - Dudas con permanencia de 6 vs 12 meses)</option>
+            <option value="inma_cliente">Cliente de Inma (Venta presencial, compara con tienda)</option>
+            <option value="juan_jose">Juan (Caso José - Pide claridad total en la cuota)</option>
           </select>
         </div>
         <div>
@@ -257,7 +274,7 @@
   </div>
 
   <div id="viewSim" class="view">
-    <div class="sim-layout">
+    <div id="simLayout" class="sim-layout">
       <div>
         <div class="card" style="padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <span id="currentPhaseTitle" class="font-sora" style="font-weight: 700; color: var(--primary);">Fase 1: Presentación</span>
@@ -271,7 +288,7 @@
         </div>
       </div>
 
-      <div class="checklist-panel">
+      <div id="checklistPanel" class="checklist-panel">
         <h3 class="font-sora" style="font-size: 1rem; margin-bottom: 12px;">Objetivos de la Fase</h3>
         <div id="checklistItems"></div>
         <div id="penaltyNotice" style="display:none; margin-top:16px; padding:8px; background:#fee2e2; color:#b91c1c; border-radius:6px; font-size:0.75rem; font-weight:600;">
@@ -465,12 +482,41 @@
         objeciones: [
           { fase: 4, triggerItem: "plan_ahorro", texto: "A mí no me asustes con números... que me quito de una trampa y me meto en otra...", resolvedBy: ["regalo", "cortesia", "noviembre", "pagado", "primer mes"] }
         ]
+      },
+      constantino: {
+        nombre: "Constantino",
+        saludo: "Hola... muy buenas tardes. ¿Dígame?",
+        objeciones: [
+          { fase: 3, triggerItem: "logistica", texto: "Mmm... a ver, explícame bien cómo va eso de los repartos programados cada 28 días y las entregas urgentes.", resolvedBy: ["28", "programado", "4 semanas", "urgencia", "48h"] }
+        ]
+      },
+      eneli: {
+        nombre: "Eneli",
+        saludo: "Buenas tardes... coménteme.",
+        objeciones: [
+          { fase: 4, triggerItem: "compromiso", texto: "Yo es que no me quiero atar un año entero... prefiero probarlo menos tiempo.", resolvedBy: ["6meses", "seis", "prueba", "ataduras"] }
+        ]
+      },
+      inma_cliente: {
+        nombre: "Cliente Presencial",
+        saludo: "Hola... buenas tardes... sí, dígame.",
+        objeciones: [
+          { fase: 2, triggerItem: "habito", texto: "Yo es que compro el agua en la tienda de abajo y ya me he acostumbrado a eso.", resolvedBy: ["comodidad", "peso", "puerta", "enfriar"] }
+        ]
+      },
+      juan_jose: {
+        nombre: "Juan",
+        saludo: "Dígame... buenas tardes.",
+        objeciones: [
+          { fase: 4, triggerItem: "elimina_cuota", texto: "Mmm... ¿y eso de los 15€ de cuota de servicio hay que pagarlo siempre o cómo va?", resolvedBy: ["quito", "elimino", "gratis", "cero", "por vida"] }
+        ]
       }
     };
 
     let estado = {
       comercial: "",
       perfilKey: "enrique",
+      nivelDificultad: "junior",
       faseActual: 1,
       pasoConversacional: 0,
       ultimaRespuestaBot: "",
@@ -604,7 +650,7 @@
           utter.voice = vocesDisponibles[indexVoz];
         }
 
-        utter.rate = 0.90; // Velocidad pausada más natural
+        utter.rate = 0.90;
         utter.pitch = 0.96;
 
         utter.onend = () => {
@@ -627,6 +673,8 @@
       
       estado.comercial = nombre;
       estado.perfilKey = document.getElementById('selectPerfil').value;
+      estado.nivelDificultad = document.getElementById('selectNivel').value;
+      
       estado.faseActual = 1;
       estado.pasoConversacional = 0;
       estado.ultimaRespuestaBot = "";
@@ -636,8 +684,19 @@
       estado.penalizadoPrecio = false;
       estado.objecionActiva = null;
 
-      document.getElementById('userInfo').innerText = `${estado.comercial} | Perfil: ${estado.perfilKey}`;
+      document.getElementById('userInfo').innerText = `${estado.comercial} | Perfil: ${estado.perfilKey} | Nivel: ${estado.nivelDificultad.toUpperCase()}`;
       
+      // Control visual del panel según nivel
+      const panel = document.getElementById('checklistPanel');
+      const simLayout = document.getElementById('simLayout');
+      if (estado.nivelDificultad === 'senior') {
+        panel.style.display = 'none';
+        simLayout.classList.add('senior-mode');
+      } else {
+        panel.style.display = 'block';
+        simLayout.classList.remove('senior-mode');
+      }
+
       document.getElementById('viewSetup').classList.remove('active');
       document.getElementById('viewSim').classList.add('active');
 
@@ -832,6 +891,7 @@
         fecha: new Date().toISOString(),
         comercial: estado.comercial,
         perfil: estado.perfilKey,
+        nivel: estado.nivelDificultad,
         score: scoreFinal
       });
       localStorage.setItem('roleplay_history', JSON.stringify(historial));
@@ -839,7 +899,6 @@
 
     function reiniciar() {
       document.getElementById('viewResults').classList.remove('active');
-      document.getElementById('viewSetup').classList.active;
       document.getElementById('viewSetup').classList.add('active');
       document.getElementById('chatBox').innerHTML = "";
     }
