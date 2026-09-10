@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador Roleplay Aquaservice 2026</title>
-  <!-- Tipografía Sora + Public Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
@@ -81,11 +80,9 @@
       border: 1px solid #fde68a;
     }
 
-    /* Vistas Setup / Chat / Resultados */
     .view { display: none; }
     .view.active { display: block; }
 
-    /* Card Layouts */
     .card {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -94,14 +91,7 @@
       margin-bottom: 16px;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
     @media (min-width: 768px) {
-      .grid-2 { grid-template-columns: 1fr 1fr; }
       .sim-layout {
         display: grid;
         grid-template-columns: 1fr 360px;
@@ -109,7 +99,6 @@
       }
     }
 
-    /* Form UI */
     label { font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.9rem; }
     input, select, button {
       width: 100%;
@@ -132,7 +121,6 @@
     }
     button.btn-primary:hover { background: var(--primary-dark); }
 
-    /* Chat Elements */
     .chat-box {
       height: 420px;
       overflow-y: auto;
@@ -195,23 +183,11 @@
       100% { transform: scale(1); }
     }
 
-    /* Checklist Panel */
     .checklist-panel {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 16px;
-    }
-
-    .phase-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      background: var(--primary-light);
-      color: var(--primary);
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 8px;
     }
 
     .chk-item {
@@ -223,9 +199,7 @@
       border-bottom: 1px solid var(--border);
     }
     .chk-item.done { color: var(--success); font-weight: 600; }
-    .chk-icon { font-size: 1rem; }
 
-    /* Results */
     .score-big {
       font-size: 3.5rem;
       font-weight: 800;
@@ -245,10 +219,9 @@
   </header>
 
   <div id="safariNotice" class="safari-alert">
-    ⚠️ <strong>Aviso de Navegador:</strong> Se ha detectado Safari. Se recomienda usar <strong>Google Chrome</strong> en iPad/Desktop para una precisión óptima del reconocimiento de voz.
+    ⚠️ <strong>Aviso de Navegador:</strong> Se recomienda usar <strong>Google Chrome</strong> para una precisión óptima del reconocimiento de voz.
   </div>
 
-  <!-- SETUP VIEW -->
   <div id="viewSetup" class="view active">
     <div class="card" style="max-width: 500px; margin: 40px auto;">
       <h2 style="margin-bottom: 16px;">Configuración de la Sesión</h2>
@@ -272,7 +245,6 @@
     </div>
   </div>
 
-  <!-- CHAT / SIMULATION VIEW -->
   <div id="viewSim" class="view">
     <div class="sim-layout">
       <div>
@@ -283,7 +255,7 @@
         <div id="chatBox" class="chat-box"></div>
         <div class="mic-controls">
           <button id="btnMic" class="mic-btn" onclick="toggleMic()">🎤</button>
-          <input type="text" id="manualText" placeholder="O escribe aquí tu respuesta y pulsa Enter..." onkeydown="if(event.key==='Enter') enviarMensajeManual()" />
+          <input type="text" id="manualText" placeholder="O escribe aquí tu respuesta..." onkeydown="if(event.key==='Enter') enviarMensajeManual()" />
           <button class="btn-primary" style="width: auto; padding: 12px 20px;" onclick="enviarMensajeManual()">Enviar</button>
         </div>
       </div>
@@ -298,7 +270,6 @@
     </div>
   </div>
 
-  <!-- RESULTS VIEW -->
   <div id="viewResults" class="view">
     <div class="card" style="max-width: 600px; margin: 20px auto; text-align: center;">
       <h2 class="font-sora">Evaluación de la Sesión</h2>
@@ -315,11 +286,9 @@
   </div>
 
   <script>
-    // Detector de Safari
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     if (isSafari) document.getElementById('safariNotice').style.display = 'block';
 
-    // Normalizador Robusto de Texto con Mapeo Numérico
     function norm(str) {
       if (!str) return '';
       let text = str.toLowerCase()
@@ -328,7 +297,6 @@
         .replace(/\s+/g, " ")
         .trim();
 
-      // Mapeo numérico a texto para corregir discrepancias del dictado vocal
       const numMap = {
         "33 90": "3390", "33,90": "3390", "33.90": "3390", "treinta y tres noventa": "3390", "treinta y tres con noventa": "3390",
         "36 90": "3690", "36,90": "3690", "36.90": "3690", "treinta y seis noventa": "3690",
@@ -348,47 +316,130 @@
       return keywords.some(kw => textNorm.includes(norm(kw)));
     }
 
-    // Configuración de las 4 Fases y Keywords (Sustentado en Transcripciones Reales)
     const checklistFases = [
       {
         fase: 1,
         titulo: "Presentación",
         items: [
-          { id: "saludo", desc: "Genera buen clima e identificación", keywords: ["hola", "buenas", "que tal", "soy", "de aquaservice", "le llamaba", "preguntaba por", "buen momento", "molesto"] },
-          { id: "autorizador", desc: "Confirma autorizador de prueba/decisor", keywords: ["autorizo", "toma la decision", "mando yo", "decide", "usted el que", "comparte la decision"] }
+          { id: "saludo", desc: "Genera buen clima e identificación", keywords: [
+              "hola", "buenas", "que tal", "soy", "de aquaservice", "le llamaba", 
+              "preguntaba por", "buen momento", "molesto", "buenos dias", "buenas tardes", 
+              "mi nombre es", "le hablo de", "disfrutando una prueba", "gratuita", 
+              "interrumpo", "tiene un minuto", "esta ocupado", "le pillo mal", 
+              "la familia", "como se encuentra", "le llamo de"
+          ]},
+          { id: "autorizador", desc: "Confirma autorizador de prueba/decisor", keywords: [
+              "autorizo", "toma la decision", "mando yo", "decide", "usted el que", 
+              "comparte la decision", "hablo con el titular", "encargado de la casa", 
+              "persona responsable", "autorizo la prueba", "quien decide", 
+              "lo decidimos entre los dos", "usted quien se encarga"
+          ]}
         ]
       },
       {
         fase: 2,
         titulo: "Investigación (I+D)",
         items: [
-          { id: "conocimiento", desc: "Indaga conocimiento previo de marca", keywords: ["nos conocia", "nos conociais", "tele", "camion", "anuncios", "vecino", "furgoneta", "mundial"] },
-          { id: "habito", desc: "Hábito de compra y competidores", keywords: ["supermercado", "compraba", "marca", "mercadona", "carrefour", "font vella", "bezoya", "solan", "acarrear", "coche"] },
-          { id: "miembros", desc: "Miembros y estimación de consumo", keywords: ["cuantos sois", "cuatro", "tres", "dos personas", "litros al mes", "garrafas al mes", "garrafa semanal", "oficina"] },
-          { id: "experiencia", desc: "Puntos fuertes de la prueba y calidad", keywords: ["que tal la prueba", "mas ha gustado", "agua fresquita", "infusiones", "caliente", "residuo seco", "mineralizacion", "diuretica", "sodio", "salud"] }
+          { id: "conocimiento", desc: "Indaga conocimiento previo de marca", keywords: [
+              "nos conocia", "nos conociais", "tele", "camion", "anuncios", 
+              "vecino", "furgoneta", "mundial", "habia escuchado hablar", 
+              "nos habia visto", "publicidad", "redes sociales", "internet", 
+              "algun familiar", "en la calle", "antes de la prueba"
+          ]},
+          { id: "habito", desc: "Hábito de compra y competidores", keywords: [
+              "supermercado", "compraba", "marca", "mercadona", "carrefour", 
+              "font vella", "bezoya", "solan", "acarrear", "coche", "agua embotellada", 
+              "grifo", "osmosis", "jarras", "cargar peso", "plastico", "donde compraba", 
+              "que agua bebe", "antes de probarnos", "como lo hacia", "como se organizaban"
+          ]},
+          { id: "miembros", desc: "Miembros y estimación de consumo", keywords: [
+              "cuantos sois", "cuatro", "tres", "dos", "personas", "litros al mes", 
+              "garrafas al mes", "garrafa semanal", "oficina", "cuantas personas", 
+              "en casa", "vivienda", "familia", "unidad familiar", "consumo medio", 
+              "botellas de litro y medio", "pack de 6", "cuantos viven en casa"
+          ]},
+          { id: "experiencia", desc: "Puntos fuertes de la prueba y calidad", keywords: [
+              "que tal la prueba", "mas ha gustado", "agua fresquita", "infusiones", 
+              "caliente", "residuo seco", "mineralizacion", "diuretica", "sodio", 
+              "salud", "comodidad", "sabor", "ligera", "cuidarse", "para cocinar", 
+              "cafe", "beber mas agua", "que le ha parecido", "su experiencia"
+          ]}
         ]
       },
       {
         fase: 3,
         titulo: "Servicio y Sostenibilidad",
         items: [
-          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: ["28 dias", "veintiocho dias", "4 semanas", "cuatro semanas", "reparto programado", "suben", "primer piso", "puerta de casa", "olvidas de acarrear"] },
-          { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: ["urgentes", "urgencia", "dos entregas", "2 entregas", "24 48 horas", "48h", "te quedes sin agua"] },
-          { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: ["garantia de por vida", "termostato", "destornillador", "llave", "grifo azul", "grifo rojo", "empujar atras", "acero inoxidable", "espacio", "micro", "84 cm", "sobremesa", "estanteria"] },
-          { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: ["reciclar", "plastico", "botellas vacias", "huella", "sostenible", "policarbonato", "cuidar el planeta", "economia circular", "carbono neutro"] },
-          { id: "app", desc: "Autogestión integral por la APP", keywords: ["aplicacion", "app", "movil", "autogestionar", "pausar el reparto", "bajar el plan", "subir el plan", "mensaje al repartidor"] }
+          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: [
+              "28 dias", "veintiocho dias", "4 semanas", "cuatro semanas", "reparto programado", 
+              "suben", "primer piso", "puerta de casa", "olvidas de acarrear", "cada mes", 
+              "una vez al mes", "se lo llevamos", "no tiene que cargar", "te lo dejamos en la puerta", 
+              "olvidese de ir al super", "repartidor habitual", "ruta asignada", "subimos las garrafas", 
+              "directamente en su domicilio"
+          ]},
+          { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: [
+              "urgentes", "urgencia", "dos entregas", "2 entregas", "24 48 horas", "48h", 
+              "te quedes sin agua", "pedido extraordinario", "si le hace falta mas", 
+              "entregas gratuitas", "aviso urgente", "antes de 48 horas", "no se va a quedar sin agua", 
+              "dos avisos al ano", "por si acaso"
+          ]},
+          { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: [
+              "garantia de por vida", "termostato", "destornillador", "llave", "grifo azul", 
+              "grifo rojo", "empujar atras", "acero inoxidable", "espacio", "micro", "84 cm", 
+              "sobremesa", "estanteria", "mantenimiento incluido", "limpieza anual", "higienizacion", 
+              "se rompe se lo cambiamos", "modelo compacto", "no necesita instalacion", "solo un enchufe", 
+              "sin obras", "seguridad para ninos", "temperatura regulable", "a su gusto"
+          ]},
+          { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: [
+              "reciclar", "plastico", "botellas vacias", "huella", "sostenible", "policarbonato", 
+              "cuidar el planeta", "economia circular", "carbono neutro", "cero residuos", 
+              "nos llevamos los envases", "reutilizamos", "reduccion de plastico", "medio ambiente", 
+              "no genera basura", "botellas retornables", "lavamos y desinfectamos"
+          ]},
+          { id: "app", desc: "Autogestión integral por la APP", keywords: [
+              "aplicacion", "app", "movil", "autogestionar", "pausar el reparto", "bajar el plan", 
+              "subir el plan", "mensaje al repartidor", "desde el telefono", "area de cliente", 
+              "gestionar sus pedidos", "ver sus facturas", "cambiar la fecha", "avisar si no esta"
+          ]}
         ]
       },
       {
         fase: 4,
         titulo: "Promoción y Cierre",
         items: [
-          { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: ["fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "no te cobro", "elimino el deposito", "conozco tu casa"] },
-          { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: ["15", "quince euros", "cuota de servicio", "te la quito", "tres meses gratis", "coste cero", "para siempre"] },
-          { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: ["plan ahorro", "3390", "3690", "2990", "4190", "botellines", "50 cl", "caja de aguitas", "combina"] },
-          { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: ["permanencia", "6meses", "12meses", "sin ataduras"] },
-          { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: ["iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "dia 10"] },
-          { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: ["aquamigo", "10%", "descuento", "regalar agua", "botellas de cortesia", "regalo 4 botellas", "este mes te lo regalo"] }
+          { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: [
+              "fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "no te cobro", 
+              "elimino el deposito", "conozco tu casa", "deposito retornable", "se lo quito", 
+              "se lo bonifico", "coste cero por la maquina", "cesion gratuita", "maquina en deposito", 
+              "sin coste inicial", "no tiene que pagar los 79"
+          ]},
+          { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: [
+              "15", "quince euros", "cuota de servicio", "te la quito", "tres meses gratis", 
+              "coste cero", "para siempre", "mantenimiento gratuito", "sin cuota mensual", 
+              "15 euros al mes de ahorro", "servicio tecnico gratis", "no cobramos alquiler"
+          ]},
+          { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: [
+              "plan ahorro", "3390", "3690", "2990", "4190", "botellines", "50 cl", "caja de aguitas", 
+              "combina", "plan familiar", "se adapta a su consumo", "pagara solo por lo que beba", 
+              "3 bidones", "4 bidones", "garrafas de 20 litros", "botellas de medio litro", 
+              "botellas pequenas", "formato ahorro"
+          ]},
+          { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: [
+              "permanencia", "6meses", "12meses", "sin ataduras", "contrato de un ano", 
+              "seis meses de prueba", "medio ano", "minimo de permanencia", "no hay letra pequena", 
+              "darse de baja", "si se muda se lo llevamos"
+          ]},
+          { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: [
+              "iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "dia 10", 
+              "numero de cuenta", "recibo domiciliado", "pago seguro", "primer cobro", 
+              "se lo paso por el banco", "facturamos a mes vencido"
+          ]},
+          { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: [
+              "aquamigo", "10%", "descuento", "regalar agua", "botellas de cortesia", 
+              "regalo 4 botellas", "este mes te lo regalo", "traer a un amigo", 
+              "descuento en factura", "plan amigo", "le dejo unas botellas hoy", 
+              "hasta el primer reparto", "pack de bienvenida"
+          ]}
         ]
       }
     ];
@@ -399,47 +450,45 @@
       penalizacion: 10 
     };
 
-    // Perfiles de Cliente y Objeciones Dinámicas
     const perfilesConfig = {
       ricardo: {
         nombre: "Ricardo",
         saludo: "Hola, sí soy yo. ¿Quién es?",
         objeciones: [
-          { fase: 2, triggerItem: "experiencia", texto: "El agua está bien, pero mis hijos están todo el día jugando con los grifos y tirando agua.", resolvedBy: ["grifo azul", "seguridad infantil", "grifo de abajo"] },
-          { fase: 4, triggerItem: "elimina_fianza", texto: "A mí lo que me echa para atrás son los 79€ de fianza de la máquina, me parece carísimo.", resolvedBy: ["elimino el deposito", "no te cobro", "gratis", "presencialmente", "fianza"] }
+          { fase: 2, triggerItem: "experiencia", texto: "El agua está bien, pero mis hijos están todo el día jugando con los grifos y tirando agua.", resolvedBy: ["grifo azul", "seguridad infantil", "grifo de abajo", "seguridad para ninos"] },
+          { fase: 4, triggerItem: "elimina_fianza", texto: "A mí lo que me echa para atrás son los 79€ de fianza de la máquina, me parece carísimo.", resolvedBy: ["elimino el deposito", "no te cobro", "gratis", "presencialmente", "fianza", "cesion gratuita"] }
         ]
       },
       esceptico: {
         nombre: "Escéptico",
         saludo: "Dígame, pero no me haga perder el tiempo que estoy ocupado.",
         objeciones: [
-          { fase: 3, triggerItem: "maquina", texto: "No me fío de los contratos, no quiero atarme a un año entero con ustedes.", resolvedBy: ["6meses", "sin ataduras", "seis meses"] }
+          { fase: 3, triggerItem: "maquina", texto: "No me fío de los contratos, no quiero atarme a un año entero con ustedes.", resolvedBy: ["6meses", "sin ataduras", "seis meses", "seis meses de prueba", "medio ano"] }
         ]
       },
       habito: {
         nombre: "Hábito",
         saludo: "Hola, coménteme rápido.",
         objeciones: [
-          { fase: 2, triggerItem: "habito", texto: "Yo es que estoy acostumbrado a comprar mis garrafas en el súper cuando hago la compra y me apaño bien.", resolvedBy: ["acarrear", "peso", "comodidad", "puerta de casa", "olvidas"] }
+          { fase: 2, triggerItem: "habito", texto: "Yo es que estoy acostumbrado a comprar mis garrafas en el súper cuando hago la compra y me apaño bien.", resolvedBy: ["acarrear", "peso", "comodidad", "puerta de casa", "olvidas", "cargar peso", "olvidese de ir al super"] }
         ]
       },
       detallista: {
         nombre: "Detallista",
         saludo: "Buenos días, le escucho.",
         objeciones: [
-          { fase: 3, triggerItem: "maquina", texto: "Probé el agua pero sale helada, para el invierno está demasiado fría.", resolvedBy: ["termostato", "destornillador", "llave", "girar"] }
+          { fase: 3, triggerItem: "maquina", texto: "Probé el agua pero sale helada, para el invierno está demasiado fría.", resolvedBy: ["termostato", "destornillador", "llave", "girar", "temperatura regulable"] }
         ]
       },
       evasivo: {
         nombre: "Evasivo",
         saludo: "Hola, dígame qué quería.",
         objeciones: [
-          { fase: 4, triggerItem: "plan_ahorro", texto: "Bueno, mándamelo por correo y ya si eso me lo pienso otro día.", resolvedBy: ["cortesia", "regalo", "agendar", "descuento", "hoy"] }
+          { fase: 4, triggerItem: "plan_ahorro", texto: "Bueno, mándamelo por correo y ya si eso me lo pienso otro día.", resolvedBy: ["cortesia", "regalo", "agendar", "descuento", "hoy", "pack de bienvenida", "le dejo unas botellas hoy"] }
         ]
       }
     };
 
-    // Estado Global del Simulador
     let estado = {
       comercial: "",
       perfilKey: "ricardo",
@@ -456,7 +505,6 @@
     let recognition = null;
     let silenceTimer = null;
 
-    // Inicializar Speech Recognition
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognition = new SpeechRecognition();
@@ -481,7 +529,6 @@
           estado.transcriptAcumulado += ' ' + final;
         }
 
-        // Auto-envío tras 1.1s de silencio
         silenceTimer = setTimeout(() => {
           if (estado.transcriptAcumulado.trim() || interim.trim()) {
             const textoEnviar = (estado.transcriptAcumulado + ' ' + interim).trim();
@@ -535,7 +582,6 @@
         const utter = new SpeechSynthesisUtterance(texto);
         utter.lang = 'es-ES';
         utter.onend = () => {
-          // Auto-escucha tras 0.6s de terminar el cliente
           setTimeout(() => {
             if (!estado.escuchando) iniciarMicrofono();
           }, 600);
@@ -547,7 +593,6 @@
       }
     }
 
-    // Lógica del Roleplay
     function iniciarSimulacion() {
       const nombre = document.getElementById('inputName').value.trim();
       if (!nombre) { alert("Por favor, introduce tu nombre."); return; }
@@ -585,13 +630,11 @@
       addMessage('user', texto);
       const textNorm = norm(texto);
 
-      // 1. Validar Penalización por Dar Precio Precoz
       if (estado.faseActual < 4 && matchesAny(textNorm, itemNegativo.keywords)) {
         estado.penalizadoPrecio = true;
         document.getElementById('penaltyNotice').style.display = 'block';
       }
 
-      // 2. Resolver Objeción Activa si la hay
       if (estado.objecionActiva) {
         if (matchesAny(textNorm, estado.objecionActiva.resolvedBy)) {
           estado.objecionesResueltas++;
@@ -602,7 +645,6 @@
         }
       }
 
-      // 3. Evaluar Checklist de la Fase Actual
       const faseConfig = checklistFases.find(f => f.fase === estado.faseActual);
       faseConfig.items.forEach(item => {
         if (!estado.itemsCompletados.has(item.id)) {
@@ -614,7 +656,6 @@
 
       renderChecklist();
 
-      // 4. Comprobar si se dispara alguna Objeción del Perfil
       const perfilObjeciones = perfilesConfig[estado.perfilKey].objeciones;
       const objTrigger = perfilObjeciones.find(o => o.fase === estado.faseActual && !o.disparada && estado.itemsCompletados.has(o.triggerItem));
 
@@ -630,7 +671,6 @@
         return;
       }
 
-      // 5. Evaluar Avance de Fase (Threshold >= 75%)
       evaluarProgresoFase();
     }
 
@@ -649,11 +689,9 @@
             hablarBot(msgAvance);
           }, 700);
         } else {
-          // Finalizar Simulacion
           setTimeout(finalizarSimulacion, 1000);
         }
       } else {
-        // Respuesta neutra de mantenimiento
         if (!estado.objecionActiva) {
           const respuestasMantenimiento = ["Le escucho.", "Ajá, entiendo.", "Cuénteme más sobre eso."];
           const resp = respuestasMantenimiento[Math.floor(Math.random() * respuestasMantenimiento.length)];
@@ -702,7 +740,6 @@
       document.getElementById('viewSim').classList.remove('active');
       document.getElementById('viewResults').classList.add('active');
 
-      // Puntuación Algorítmica Exacta
       let totalItemsAll = 0;
       checklistFases.forEach(f => totalItemsAll += f.items.length);
       const totalMarcados = estado.itemsCompletados.size;
@@ -729,7 +766,6 @@
         <li><strong>Penalización por precio prematuro:</strong> ${estado.penalizadoPrecio ? '-10 puntos' : 'Ninguna (0 pts)'}</li>
       `;
 
-      // Guardar en localStorage
       const historial = JSON.parse(localStorage.getItem('roleplay_history') || '[]');
       historial.push({
         fecha: new Date().toISOString(),
