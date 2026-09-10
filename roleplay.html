@@ -219,7 +219,7 @@
   </header>
 
   <div id="safariNotice" class="safari-alert">
-    ⚠️ <strong>Aviso de Navegador:</strong> Se recomienda usar <strong>Google Chrome</strong> para una precisión óptima del reconocimiento de voz y las voces HD.
+    ⚠️ <strong>Consejo de Voz:</strong> Abre la web en <strong>Microsoft Edge</strong> para activar gratis las voces ultra-naturales (Neural Speech).
   </div>
 
   <div id="viewSetup" class="view active">
@@ -237,6 +237,12 @@
             <option value="elizabeth">Elizabeth y Zacarías (Dolores de rodilla/mano, exigen comodidad y salud)</option>
             <option value="francisca">Francisca (Jubilada, asustada por los costes y la fianza)</option>
             <option value="raquel">Raquel y Pareja (Problema de espacio en cocina/galería)</option>
+          </select>
+        </div>
+        <div>
+          <label for="selectVoz">Voz del Cliente (Selecciona la mejor de tu sistema):</label>
+          <select id="selectVoz">
+            <option value="">Cargando voces disponibles...</option>
           </select>
         </div>
         <button id="btnStart" class="btn-primary" onclick="iniciarSimulacion()">Iniciar Roleplay</button>
@@ -285,9 +291,6 @@
   </div>
 
   <script>
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (isSafari) document.getElementById('safariNotice').style.display = 'block';
-
     function norm(str) {
       if (!str) return '';
       let text = str.toLowerCase()
@@ -437,35 +440,32 @@
     let silenceTimer = null;
     let vocesDisponibles = [];
 
-    function cargarVoces() {
-      if ('speechSynthesis' in window) {
-        vocesDisponibles = window.speechSynthesis.getVoices();
+    function cargarVocesDesplegable() {
+      if (!('speechSynthesis' in window)) return;
+      vocesDisponibles = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('es'));
+      const select = document.getElementById('selectVoz');
+      select.innerHTML = "";
+
+      if (vocesDisponibles.length === 0) {
+        select.innerHTML = "<option value=''>Voz por defecto del navegador</option>";
+        return;
       }
+
+      vocesDisponibles.forEach((v, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        let tag = v.name;
+        if (v.name.includes("Natural") || v.name.includes("Neural") || v.name.includes("Online")) {
+          tag += " ⭐ (Alta Calidad / Humana)";
+        }
+        option.innerText = tag;
+        select.appendChild(option);
+      });
     }
 
-    cargarVoces();
+    cargarVocesDesplegable();
     if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = cargarVoces;
-    }
-
-    function obtenerMejorVozEspanol() {
-      if (!vocesDisponibles.length) cargarVoces();
-      const vocesEs = vocesDisponibles.filter(v => v.lang.startsWith('es'));
-      if (!vocesEs.length) return null;
-
-      const prioridades = [
-        v => v.name.includes("Google") && v.lang.includes("es"),
-        v => (v.name.includes("Enhanced") || v.name.includes("Natural") || v.name.includes("Online")) && v.lang.includes("es"),
-        v => v.name.includes("Jorge") || v.name.includes("Monica") || v.name.includes("Mónica") || v.name.includes("Paulina") || v.name.includes("Helena") || v.name.includes("Francisca"),
-        v => v.lang === "es-ES",
-        v => v.lang.startsWith("es")
-      ];
-
-      for (let criterio of prioridades) {
-        const voz = vocesEs.find(criterio);
-        if (voz) return voz;
-      }
-      return vocesEs[0];
+      window.speechSynthesis.onvoiceschanged = cargarVocesDesplegable;
     }
 
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -518,7 +518,7 @@
 
     function toggleMic() {
       if (!recognition) {
-        alert("Tu navegador no soporta Web Speech API. Usa Google Chrome.");
+        alert("Tu navegador no soporta Web Speech API. Usa Google Chrome o Edge.");
         return;
       }
       if (estado.escuchando) {
@@ -548,21 +548,16 @@
         detenerMicrofono();
         estado.botHablando = true;
 
-        let textoFormateado = texto
-          .replace(/\.\.\./g, '... ')
-          .replace(/,/g, ', ')
-          .replace(/\?/g, '? ');
-
-        const utter = new SpeechSynthesisUtterance(textoFormateado);
+        const utter = new SpeechSynthesisUtterance(texto);
         utter.lang = 'es-ES';
 
-        const mejorVoz = obtenerMejorVozEspanol();
-        if (mejorVoz) {
-          utter.voice = mejorVoz;
+        const indexVoz = document.getElementById('selectVoz').value;
+        if (indexVoz !== "" && vocesDisponibles[indexVoz]) {
+          utter.voice = vocesDisponibles[indexVoz];
         }
 
-        utter.rate = 0.93;
-        utter.pitch = 0.98;
+        utter.rate = 0.92;
+        utter.pitch = 0.97;
 
         utter.onend = () => {
           estado.botHablando = false;
@@ -620,13 +615,11 @@
       addMessage('user', texto);
       const textNorm = norm(texto);
 
-      // 1. Penalización
       if (estado.faseActual < 4 && matchesAny(textNorm, itemNegativo.keywords)) {
         estado.penalizadoPrecio = true;
         document.getElementById('penaltyNotice').style.display = 'block';
       }
 
-      // 2. Resolver Objeción Activa
       if (estado.objecionActiva) {
         if (matchesAny(textNorm, estado.objecionActiva.resolvedBy)) {
           estado.objecionesResueltas++;
@@ -637,7 +630,6 @@
         }
       }
 
-      // 3. Marcar ítems del checklist
       const faseConfig = checklistFases.find(f => f.fase === estado.faseActual);
       faseConfig.items.forEach(item => {
         if (!estado.itemsCompletados.has(item.id)) {
@@ -649,7 +641,6 @@
 
       renderChecklist();
 
-      // 4. DIÁLOGOS REALES EXTRAÍDOS DE LLAMADAS DE DRIVE
       let respuestaCliente = "";
 
       if (estado.faseActual === 1) {
@@ -687,7 +678,6 @@
 
       estado.ultimaRespuestaBot = respuestaCliente;
 
-      // 5. Comprobar Objeción Dinámica Real
       const perfilObjeciones = perfilesConfig[estado.perfilKey].objeciones;
       const objTrigger = perfilObjeciones.find(o => o.fase === estado.faseActual && !o.disparada && estado.itemsCompletados.has(o.triggerItem));
 
@@ -703,7 +693,6 @@
         return;
       }
 
-      // Emitir respuesta natural
       setTimeout(() => {
         addMessage('bot', respuestaCliente);
         hablarBot(respuestaCliente, () => {
