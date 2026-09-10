@@ -298,10 +298,10 @@
         .trim();
 
       const numMap = {
-        "33 90": "3390", "33,90": "3390", "33.90": "3390", "treinta y tres noventa": "3390",
-        "36 90": "3690", "36,90": "3690", "36.90": "3690",
+        "33 90": "3390", "33,90": "3390", "33.90": "3390",
+        "36 90": "3690", "36,90": "3690",
         "15 euros": "15", "quince": "15", "79 euros": "79", "80 euros": "80",
-        "6 meses": "6meses", "seis meses": "6meses", "12 meses": "12meses", "doce meses": "12meses"
+        "6 meses": "6meses", "seis meses": "6meses", "12 meses": "12meses"
       };
 
       Object.keys(numMap).forEach(k => {
@@ -359,7 +359,7 @@
         fase: 3,
         titulo: "Servicio y Sostenibilidad",
         items: [
-          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: ["28", "semanas", "programado", "suben", "piso", "puerta", "cocar", "mes", "llevamos"] },
+          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: ["28", "semanas", "programado", "suben", "piso", "puerta", "mes", "llevamos"] },
           { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: ["urgentes", "urgencia", "entregas", "horas", "48h", "gratuitas", "aviso"] },
           { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: ["garantia", "termostato", "destornillador", "llave", "azul", "rojo", "espacio", "micro", "84", "sobremesa", "mantenimiento"] },
           { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: ["reciclar", "plastico", "vacias", "sostenible", "planeta", "residuos", "envases"] },
@@ -430,6 +430,7 @@
       perfilKey: "ricardo",
       faseActual: 1,
       pasoConversacional: 0,
+      ultimaRespuestaBot: "",
       itemsCompletados: new Set(),
       objecionesResueltas: 0,
       objecionesTotales: 0,
@@ -538,6 +539,7 @@
       estado.perfilKey = document.getElementById('selectPerfil').value;
       estado.faseActual = 1;
       estado.pasoConversacional = 0;
+      estado.ultimaRespuestaBot = "";
       estado.itemsCompletados.clear();
       estado.objecionesResueltas = 0;
       estado.objecionesTotales = 0;
@@ -552,6 +554,7 @@
       renderChecklist();
       
       const saludoBot = perfilesConfig[estado.perfilKey].saludo; // "Hola, dígame."
+      estado.ultimaRespuestaBot = saludoBot;
       addMessage('bot', saludoBot);
       hablarBot(saludoBot);
     }
@@ -597,18 +600,18 @@
 
       renderChecklist();
 
-      // 4. MÁQUINA DE ESTADOS DE DIÁLOGO NATURAL (Respuestas reactivas)
+      // 4. MÁQUINA DE ESTADOS SECUENCIAL (CERO REPETICIONES)
       let respuestaCliente = "";
 
       if (estado.faseActual === 1) {
-        if (matchesAny(textNorm, ["autorizo", "decision", "mando", "decide", "usted", "titular"])) {
-          respuestaCliente = "Ah, sí, soy yo el que la autorizó y el que toma las decisiones en casa. ¿Dígame?";
-          estado.pasoConversacional = 2;
-        } else if (matchesAny(textNorm, ["aquaservice", "prueba", "prioritarias", "ventajosas", "encantar"])) {
+        if (estado.pasoConversacional === 0) {
           respuestaCliente = "Ah, sí, de Aquaservice. ¿Qué pasó?";
           estado.pasoConversacional = 1;
+        } else if (estado.pasoConversacional === 1) {
+          respuestaCliente = "Ah, sí, la prueba la pedí yo personalmente y las decisiones las tomo yo. ¿Dígame?";
+          estado.pasoConversacional = 2;
         } else {
-          respuestaCliente = "Sí, dígame, ¿de dónde me llama exactamente?";
+          respuestaCliente = "Vale, coménteme, ¿qué condiciones o promoción era esa que decía?";
         }
       } 
       else if (estado.faseActual === 2) {
@@ -628,6 +631,13 @@
       else if (estado.faseActual === 4) {
         respuestaCliente = "Entendido. A ver, cuénteme qué precios y qué promoción me propone exactamente.";
       }
+
+      // GUARDIA ANTI-REPETICIÓN: Si por cualquier razón la respuesta es idéntica a la anterior, forzar frase alternativa
+      if (respuestaCliente === estado.ultimaRespuestaBot) {
+        respuestaCliente = "Entendido. Siga contándome, ¿qué más quería comentarme?";
+      }
+
+      estado.ultimaRespuestaBot = respuestaCliente;
 
       // 5. Comprobar Objeción Dinámica
       const perfilObjeciones = perfilesConfig[estado.perfilKey].objeciones;
