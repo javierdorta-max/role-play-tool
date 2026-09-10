@@ -219,7 +219,7 @@
   </header>
 
   <div id="safariNotice" class="safari-alert">
-    ⚠️ <strong>Aviso de Navegador:</strong> Se recomienda usar <strong>Google Chrome</strong> para una precisión óptima del reconocimiento de voz.
+    ⚠️ <strong>Aviso de Navegador:</strong> Se recomienda usar <strong>Google Chrome</strong> para una precisión óptima del reconocimiento de voz y las voces HD.
   </div>
 
   <div id="viewSetup" class="view active">
@@ -435,6 +435,38 @@
 
     let recognition = null;
     let silenceTimer = null;
+    let vocesDisponibles = [];
+
+    function cargarVoces() {
+      if ('speechSynthesis' in window) {
+        vocesDisponibles = window.speechSynthesis.getVoices();
+      }
+    }
+
+    cargarVoces();
+    if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = cargarVoces;
+    }
+
+    function obtenerMejorVozEspanol() {
+      if (!vocesDisponibles.length) cargarVoces();
+      const vocesEs = vocesDisponibles.filter(v => v.lang.startsWith('es'));
+      if (!vocesEs.length) return null;
+
+      const prioridades = [
+        v => v.name.includes("Google") && v.lang.includes("es"),
+        v => (v.name.includes("Enhanced") || v.name.includes("Natural") || v.name.includes("Online")) && v.lang.includes("es"),
+        v => v.name.includes("Jorge") || v.name.includes("Monica") || v.name.includes("Mónica") || v.name.includes("Paulina") || v.name.includes("Helena") || v.name.includes("Francisca"),
+        v => v.lang === "es-ES",
+        v => v.lang.startsWith("es")
+      ];
+
+      for (let criterio of prioridades) {
+        const voz = vocesEs.find(criterio);
+        if (voz) return voz;
+      }
+      return vocesEs[0];
+    }
 
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -516,13 +548,27 @@
         detenerMicrofono();
         estado.botHablando = true;
 
-        const utter = new SpeechSynthesisUtterance(texto);
+        let textoFormateado = texto
+          .replace(/\.\.\./g, '... ')
+          .replace(/,/g, ', ')
+          .replace(/\?/g, '? ');
+
+        const utter = new SpeechSynthesisUtterance(textoFormateado);
         utter.lang = 'es-ES';
+
+        const mejorVoz = obtenerMejorVozEspanol();
+        if (mejorVoz) {
+          utter.voice = mejorVoz;
+        }
+
+        utter.rate = 0.93;
+        utter.pitch = 0.98;
+
         utter.onend = () => {
           estado.botHablando = false;
           setTimeout(() => {
             if (!estado.escuchando) iniciarMicrofono();
-          }, 600);
+          }, 500);
           if (callback) callback();
         };
         window.speechSynthesis.speak(utter);
@@ -585,7 +631,7 @@
         if (matchesAny(textNorm, estado.objecionActiva.resolvedBy)) {
           estado.objecionesResueltas++;
           estado.objecionActiva = null;
-          addMessage('bot', "Ah, bueno, pues visto así de esa manera tiene usted toda la razón. Siga contándome.");
+          addMessage('bot', "Ah, bueno... pues visto así de esa manera tiene usted toda la razón. Siga contándome.");
           evaluarProgresoFase();
           return;
         }
@@ -614,7 +660,7 @@
           respuestaCliente = "Sí, las decisiones en casa las tomamos nosotros directamente. Cuénteme.";
           estado.pasoConversacional = 2;
         } else {
-          respuestaCliente = "Vale, coménteme, ¿qué condiciones especiales son esas que me decía?";
+          respuestaCliente = "Vale, coménteme... ¿qué condiciones especiales son esas que me decía?";
         }
       } 
       else if (estado.faseActual === 2) {
