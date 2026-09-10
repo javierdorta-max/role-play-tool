@@ -99,7 +99,7 @@
         transition: all 0.3s ease;
       }
       .sim-layout.senior-mode {
-        grid-template-columns: 1fr; /* Ocupa todo el ancho si se oculta el panel */
+        grid-template-columns: 1fr;
         max-width: 900px;
         margin: 0 auto;
       }
@@ -642,7 +642,17 @@
         detenerMicrofono();
         estado.botHablando = true;
 
-        const utter = new SpeechSynthesisUtterance(texto);
+        // Limpiamos las muletillas sonoras para que el robot no las lea literalmente,
+        // y convertimos los puntos suspensivos en comas para forzar pausas limpias.
+        let textoLimpioParaVoz = texto
+          .replace(/Mmm\.\.\./gi, '')
+          .replace(/Eh\.\.\./gi, '')
+          .replace(/Uf\.\.\./gi, '')
+          .replace(/Ah\.\.\./gi, '')
+          .replace(/\.\.\./g, ', ')
+          .trim();
+
+        const utter = new SpeechSynthesisUtterance(textoLimpioParaVoz);
         utter.lang = 'es-ES';
 
         const indexVoz = document.getElementById('selectVoz').value;
@@ -686,7 +696,6 @@
 
       document.getElementById('userInfo').innerText = `${estado.comercial} | Perfil: ${estado.perfilKey} | Nivel: ${estado.nivelDificultad.toUpperCase()}`;
       
-      // Control visual del panel según nivel
       const panel = document.getElementById('checklistPanel');
       const simLayout = document.getElementById('simLayout');
       if (estado.nivelDificultad === 'senior') {
@@ -899,6 +908,7 @@
 
     function reiniciar() {
       document.getElementById('viewResults').classList.remove('active');
+      document.getElementById('viewSetup').classList.remove('active');
       document.getElementById('viewSetup').classList.add('active');
       document.getElementById('chatBox').innerHTML = "";
     }
