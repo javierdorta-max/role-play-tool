@@ -208,7 +208,7 @@
 
   <header>
     <div class="logo">
-      <span>💧 Roleplay Aquaservice (Audio Real)</span>
+      <span>💧 Roleplay Aquaservice</span>
     </div>
     <div id="userInfo" style="font-size: 0.875rem; color: var(--text-muted);"></div>
   </header>
@@ -229,9 +229,22 @@
           </select>
         </div>
         <div>
-          <label for="selectPerfil">Perfil de Cliente Activo:</label>
+          <label for="selectPerfil">Perfil de Cliente (14 Casos Reales):</label>
           <select id="selectPerfil">
-            <option value="enrique">Enrique (Piloto Audio Real - Nietos y garrafas 8L)</option>
+            <option value="enrique">Enrique (Nietos liados, compara con garrafas 8L del súper)</option>
+            <option value="elizabeth">Elizabeth y Zacarías (Dolores rodilla/mano, exigen salud/policarbonato)</option>
+            <option value="francisca">Francisca (Jubilada, asustada por los 79€ de fianza)</option>
+            <option value="raquel">Raquel y Pareja (Falta de espacio en cocina/galería)</option>
+            <option value="domingo">Domingo (Calle estrecha, niega 12 meses y teme subidas)</option>
+            <option value="juancarlos">Juan Carlos y Leticia (Impaciente, exige precio y pago directo)</option>
+            <option value="josecarlos">José Carlos (Pensión 700€, rechaza por "perro/trampa")</option>
+            <option value="antonio">Antonio el Manitas (Peugeot 2008, consumo elevado)</option>
+            <option value="josemanuel">José Manuel - Sanito90 (Sector seguros, pago 36.90€ hoy)</option>
+            <option value="maricarmen">Mari Carmen (Dudas con "otra trampa" y cobro en mano)</option>
+            <option value="constantino">Constantino (Exige detalle 28 días, app y botellines)</option>
+            <option value="eneli">Eneli (Caso Rubén - Dudas con permanencia de 6 vs 12 meses)</option>
+            <option value="inma_cliente">Cliente de Inma (Venta presencial, compara con tienda)</option>
+            <option value="juan_jose">Juan (Caso José - Pide claridad total en la cuota)</option>
           </select>
         </div>
         <button id="btnStart" class="btn-primary" onclick="iniciarSimulacion()">Iniciar Roleplay</button>
@@ -320,10 +333,11 @@
         titulo: "Presentación",
         items: [
           { id: "saludo", desc: "Identificación, empresa y gancho inicial", keywords: [
-              "hola", "buenas", "soy", "aquaservice", "prueba", "disfrutando", "encargado", "responsable"
+              "hola", "buenas", "soy", "aquaservice", "prueba", "disfrutando", "encargado", "responsable", 
+              "prioritarias", "ventajosas", "encantar", "tutearos", "tutear", "jovenes"
           ]},
           { id: "autorizador", desc: "Confirma autorizador de prueba/decisor", keywords: [
-              "autorizo", "decision", "mando", "decide", "usted", "titular", "responsable"
+              "autorizo", "autorizo la prueba", "decision", "mando", "decide", "usted", "titular", "responsable", "esposo", "marido"
           ]}
         ]
       },
@@ -331,67 +345,165 @@
         fase: 2,
         titulo: "Investigación (I+D)",
         items: [
-          { id: "conocimiento", desc: "Indaga conocimiento previo de marca", keywords: ["conocía", "conocia", "tele", "camion", "anuncios", "vecino"] },
-          { id: "habito", desc: "Hábito de compra previo (dolor de cargar)", keywords: ["supermercado", "super", "compraba", "acarrear", "coche", "cargar", "peso"] },
-          { id: "miembros", desc: "Consenso pedagógico (1 Litro/persona/día)", keywords: ["cuantos", "litro", "litros", "personas", "botellas", "nietos"] },
-          { id: "experiencia", desc: "Puntos fuertes de la prueba", keywords: ["prueba", "gustado", "fresquita", "comodidad", "sabor"] }
+          { id: "conocimiento", desc: "Indaga conocimiento previo de marca", keywords: [
+              "conocía", "conocia", "conociais", "tele", "camion", "anuncios", "vecino", "furgoneta", "escuchado", "visto"
+          ]},
+          { id: "habito", desc: "Hábito de compra previo (dolor de cargar)", keywords: [
+              "supermercado", "super", "compraba", "marca", "mercadona", "carrefour", "acarrear", "coche", "embotellada", "grifo", "jarras", "cargar", "peso", "rodilla", "mano"
+          ]},
+          { id: "miembros", desc: "Consenso pedagógico (1 Litro/persona/día)", keywords: [
+              "cuantos", "cuatro", "tres", "dos", "personas", "litro", "litros", "semanal", "botellas", "3 botellas", "4 botellas", "vacia", "durara", "dias", "nietos"
+          ]},
+          { id: "experiencia", desc: "Puntos fuertes de la prueba", keywords: [
+              "prueba", "gustado", "fresquita", "infusiones", "caliente", "comodidad", "sabor", "ligera", "cuidarse", "salud", "sodio", "medicos"
+          ]}
         ]
       },
       {
         fase: 3,
         titulo: "Servicio y Sostenibilidad",
         items: [
-          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: ["28", "semanas", "programado", "suben", "puerta"] },
-          { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: ["urgentes", "urgencia", "48h", "gratuitas"] },
-          { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: ["garantia", "termostato", "policarbonato"] },
-          { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: ["reciclar", "plastico", "vacias"] },
-          { id: "app", desc: "Autogestión integral por la APP", keywords: ["aplicacion", "app", "movil"] }
+          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: ["28", "semanas", "programado", "suben", "piso", "puerta", "mes", "llevamos", "galeria"] },
+          { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: ["urgentes", "urgencia", "entregas", "horas", "48h", "gratuitas", "aviso"] },
+          { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: ["garantia", "termostato", "destornillador", "llave", "azul", "rojo", "espacio", "sobremesa", "mantenimiento", "policarbonato"] },
+          { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: ["reciclar", "plastico", "vacias", "sostenible", "planeta", "residuos", "envases", "microplasticos"] },
+          { id: "app", desc: "Autogestión integral por la APP", keywords: ["aplicacion", "app", "movil", "autogestionar", "pausar", "bajar", "subir", "cliente"] }
         ]
       },
       {
         fase: 4,
         titulo: "Promoción y Cierre",
         items: [
-          { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: ["fianza", "79", "deposito", "cero", "gratis"] },
-          { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: ["15", "quince", "cuota", "servicio", "quito"] },
-          { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: ["plan", "3690", "botellines", "litro", "046"] },
-          { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: ["permanencia", "6meses", "seis"] },
-          { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: ["iban", "cuenta", "efectivo", "tarjeta"] },
-          { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: ["aquamigo", "10", "descuento", "cortesia"] }
+          { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: ["fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "cobro", "elimino"] },
+          { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: ["15", "quince", "cuota", "servicio", "quito", "gratis", "cero"] },
+          { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: ["plan", "3390", "3690", "2990", "3490", "4190", "botellines", "50", "aguitas", "litro", "046"] },
+          { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: ["permanencia", "6meses", "12meses", "ataduras", "ano", "seis", "prueba"] },
+          { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: ["iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "10"] },
+          { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: ["aquamigo", "10", "descuento", "regalar", "cortesia", "regalo", "amigo"] }
         ]
       }
     ];
 
-    const itemNegativo = { id: "no_cede_precio", keywords: ["3390", "3690", "15", "79"], penalizacion: 10 };
+    const itemNegativo = { 
+      id: "no_cede_precio", 
+      keywords: ["3390", "3690", "2990", "3490", "15", "79", "80"], 
+      penalizacion: 10 
+    };
 
-    const perfilEnrique = {
-      nombre: "Enrique",
-      respuestas: {
-        saludo: { texto: "Hola, buenas tardes. Pasa, pasa... perdona que estoy aquí con los nietos liados.", audio: "1_inicio" },
-        decisor: { texto: "Sí, claro... las decisiones en casa las tomamos nosotros directamente. Cuénteme.", audio: "1_decisor" },
-        cierre1: { texto: "Vale, coménteme... ¿qué condiciones especiales son esas que me decía?", audio: "1_cierre" },
-        conocimiento: { texto: "Sí, de oídas... una vecina del bloque lo tiene y vemos los camiones por la calle.", audio: "2_conocimiento" },
-        habito: { texto: "Pues antes venía mi hija a traernos las garrafas del súper... porque nosotros no podemos cargar con peso.", audio: "2_habito" },
-        consumo: { texto: "Pues la botella de prueba justo nos ha durado una semana entera.", audio: "2_consumo" },
-        experiencia: { texto: "Pues el agua la verdad que nos ha gustado mucho... sale muy fresquita y es comodísima.", audio: "2_experiencia" },
-        servicio: { texto: "Comprendo... ¿Y cómo funciona exactamente lo del reparto cada 28 días y la garantía del aparato?", audio: "3_servicio" },
-        pideprecio: { texto: "Entendido. A ver... dígame en cuánto se queda el precio final con el plan de ahorro.", audio: "4_pideprecio" },
-        objecion: { texto: "A ver... es que mi hija nos trae garrafas de 8 litros del súper a 1,60€ y para mí que nos sale bastante más barato que esto.", audio: "4_objecion" },
-        resuelta: { texto: "Ah, bueno... pues visto así de esa manera tiene usted toda la razón. Siga contándome.", audio: "4_resuelta" },
-        comodin: { texto: "Entendido... Siga explicándome, que le escucho.", audio: "comodin" }
+    const perfilesConfig = {
+      enrique: {
+        nombre: "Enrique",
+        saludo: "Mmm... Hola, buenas tardes. Pasa, pasa... perdona que estoy aquí con los nietos liados.",
+        objeciones: [
+          { fase: 4, triggerItem: "plan_ahorro", texto: "Mmm... A ver... es que mi hija nos trae garrafas de 8 litros del súper a 1,60€ y para mí que nos sale bastante más barato que esto.", resolvedBy: ["046", "litro", "46 centimos", "acarrear", "enfriar", "puerta"] }
+        ]
+      },
+      elizabeth: {
+        nombre: "Elizabeth y Zacarías",
+        saludo: "Hola... buenas tardes. Pase, pase... siéntese por aquí un momento.",
+        objeciones: [
+          { fase: 2, triggerItem: "habito", texto: "Eh... a ver, a nosotros lo que nos preocupa es que yo tengo un problema feo en la rodilla y él en la mano... y cargar garrafas del súper es un suplicio.", resolvedBy: ["comodidad", "puerta", "suben", "llevamos", "cero esfuerzo"] },
+          { fase: 3, triggerItem: "sostenibilidad", texto: "Y... mmm... una pregunta técnica... ¿las garrafas estas no soltarán microplásticos con el calor como las de la calle?", resolvedBy: ["policarbonato", "biberones", "50 usos", "calor", "no suelta"] }
+        ]
+      },
+      francisca: {
+        nombre: "Francisca",
+        saludo: "Sí, sí... yo misma... Dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "elimina_fianza", texto: "Uy... cuántos dineros... 79€ de fianza así de golpe suena muy fuerte... los jubilados no sé si llegaremos a pagarlo.", resolvedBy: ["elimino", "deposito", "gratis", "portar", "ningun tipo", "cero"] }
+        ]
+      },
+      raquel: {
+        nombre: "Raquel",
+        saludo: "Hola... buenas tardes... coménteme.",
+        objeciones: [
+          { fase: 3, triggerItem: "maquina", texto: "Eh... es que el aparato este es muy grande y en la cocina no tenemos nada de espacio... está en la galería cortando el paso.", resolvedBy: ["sobremesa", "pequena", "freidora", "encimera", "pequenita"] }
+        ]
+      },
+      domingo: {
+        nombre: "Domingo",
+        saludo: "Mmm... Sí, hola... dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "compromiso", texto: "A mí no me hables de 12 meses de contrato... que yo estuve apuntado hace tiempo y cada mes me subían cosas en la letra pequeña.", resolvedBy: ["6meses", "seis", "ataduras", "fijo", "respeto"] }
+        ]
+      },
+      juancarlos: {
+        nombre: "Juan Carlos y Leticia",
+        saludo: "Hola... Sí, Juan Carlos al habla. Dígame rápido.",
+        objeciones: [
+          { fase: 1, triggerItem: "saludo", texto: "Sí... a ver, a mí me parece bien lo del agua, pero... ¿a quién le pago yo esto después y cuánto me va a costar exactamente?", resolvedBy: ["servicio", "promocion", "explicar", "paso a paso"] }
+        ]
+      },
+      josecarlos: {
+        nombre: "José Carlos",
+        saludo: "Buenas tardes... dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "plan_ahorro", texto: "Uf... mmm... a ver, yo es que con una paga de 700€ esto lo veo mucha tela... para mí es meterse en un perro grande.", resolvedBy: ["3390", "diario", "sustituir", "super", "ahorro"] }
+        ]
+      },
+      antonio: {
+        nombre: "Antonio el Manitas",
+        saludo: "Hola... buenas tardes. Pasa, pasa... venía ahora mismo de cortar las escaleras.",
+        objeciones: [
+          { fase: 2, triggerItem: "miembros", texto: "A ver... nosotros somos dos en casa, pero esta semana con los chiquillos hemos bebido agua a cascoporro.", resolvedBy: ["litro", "consenso", "4 botellas", "3 botellas", "ajustar"] }
+        ]
+      },
+      josemanuel: {
+        nombre: "José Manuel (Sanito90)",
+        saludo: "Buenas tardes... coméntame.",
+        objeciones: [
+          { fase: 4, triggerItem: "pago_cobro", texto: "Mmm... vale, ¿y cómo lo dejamos pagado hoy? ¿Puedo dártelo en efectivo o prefieres tarjeta?", resolvedBy: ["efectivo", "tarjeta", "40", "cambio", "cortesia"] }
+        ]
+      },
+      maricarmen: {
+        nombre: "Mari Carmen",
+        saludo: "Hola... dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "plan_ahorro", texto: "A mí no me asustes con números... que me quito de una trampa y me meto en otra...", resolvedBy: ["regalo", "cortesia", "noviembre", "pagado", "primer mes"] }
+        ]
+      },
+      constantino: {
+        nombre: "Constantino",
+        saludo: "Hola... muy buenas tardes. ¿Dígame?",
+        objeciones: [
+          { fase: 3, triggerItem: "logistica", texto: "Mmm... a ver, explícame bien cómo va eso de los repartos programados cada 28 días y las entregas urgentes.", resolvedBy: ["28", "programado", "4 semanas", "urgencia", "48h"] }
+        ]
+      },
+      eneli: {
+        nombre: "Eneli",
+        saludo: "Buenas tardes... coménteme.",
+        objeciones: [
+          { fase: 4, triggerItem: "compromiso", texto: "Yo es que no me quiero atar un año entero... prefiero probarlo menos tiempo.", resolvedBy: ["6meses", "seis", "prueba", "ataduras"] }
+        ]
+      },
+      inma_cliente: {
+        nombre: "Cliente Presencial",
+        saludo: "Hola... buenas tardes... sí, dígame.",
+        objeciones: [
+          { fase: 2, triggerItem: "habito", texto: "Yo es que compro el agua en la tienda de abajo y ya me he acostumbrado a eso.", resolvedBy: ["comodidad", "peso", "puerta", "enfriar"] }
+        ]
+      },
+      juan_jose: {
+        nombre: "Juan",
+        saludo: "Dígame... buenas tardes.",
+        objeciones: [
+          { fase: 4, triggerItem: "elimina_cuota", texto: "Mmm... ¿y eso de los 15€ de cuota de servicio hay que pagarlo siempre o cómo va?", resolvedBy: ["quito", "elimino", "gratis", "cero", "por vida"] }
+        ]
       }
     };
 
     let estado = {
       comercial: "",
+      perfilKey: "enrique",
       nivelDificultad: "junior",
       faseActual: 1,
       pasoConversacional: 0,
+      ultimaRespuestaBot: "",
       itemsCompletados: new Set(),
       objecionesResueltas: 0,
       objecionesTotales: 0,
       penalizadoPrecio: false,
-      objecionActiva: false,
+      objecionActiva: null,
       escuchando: false,
       botHablando: false,
       transcriptAcumulado: ""
@@ -399,7 +511,6 @@
 
     let recognition = null;
     let silenceTimer = null;
-    let currentAudioObj = null;
 
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -416,11 +527,16 @@
         let final = '';
 
         for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) final += event.results[i][0].transcript;
-          else interim += event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            final += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
         }
 
-        if (final) estado.transcriptAcumulado += ' ' + final;
+        if (final) {
+          estado.transcriptAcumulado += ' ' + final;
+        }
 
         silenceTimer = setTimeout(() => {
           if ((estado.transcriptAcumulado.trim() || interim.trim()) && !estado.botHablando) {
@@ -432,14 +548,28 @@
         }, 1100);
       };
 
-      recognition.onerror = () => detenerMicrofono();
-      recognition.onend = () => { if (estado.escuchando && !estado.botHablando) try { recognition.start(); } catch(e){} };
+      recognition.onerror = (err) => {
+        console.warn("Speech Rec Error:", err);
+        detenerMicrofono();
+      };
+
+      recognition.onend = () => {
+        if (estado.escuchando && !estado.botHablando) {
+          try { recognition.start(); } catch(e) {}
+        }
+      };
     }
 
     function toggleMic() {
-      if (!recognition) { alert("Usa Google Chrome o Edge."); return; }
-      if (estado.escuchando) detenerMicrofono();
-      else iniciarMicrofono();
+      if (!recognition) {
+        alert("Tu navegador no soporta Web Speech API. Usa Google Chrome o Edge.");
+        return;
+      }
+      if (estado.escuchando) {
+        detenerMicrofono();
+      } else {
+        iniciarMicrofono();
+      }
     }
 
     function iniciarMicrofono() {
@@ -456,30 +586,37 @@
       try { recognition.stop(); } catch(e){}
     }
 
-    // MOTOR REPRODUCTOR DE AUDIOS REALES
-    function reproducirAudioReal(nombreAudio, callback) {
-      detenerMicrofono();
-      estado.botHablando = true;
+    function hablarBot(texto, callback) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        detenerMicrofono();
+        estado.botHablando = true;
 
-      if (currentAudioObj) {
-        currentAudioObj.pause();
-        currentAudioObj = null;
-      }
+        let textoLimpioParaVoz = texto
+          .replace(/Mmm\.\.\./gi, '')
+          .replace(/Eh\.\.\./gi, '')
+          .replace(/Uf\.\.\./gi, '')
+          .replace(/Ah\.\.\./gi, '')
+          .replace(/\.\.\./g, ', ')
+          .trim();
 
-      // Intenta reproducir .mp3 o .m4a
-      currentAudioObj = new Audio(`audios/${nombreAudio}.mp3`);
-      
-      currentAudioObj.play().catch(() => {
-        // Si falla .mp3, prueba con extensión .m4a
-        currentAudioObj = new Audio(`audios/${nombreAudio}.m4a`);
-        currentAudioObj.play().catch(e => console.log("Audio no encontrado:", nombreAudio));
-      });
+        const utter = new SpeechSynthesisUtterance(textoLimpioParaVoz);
+        utter.lang = 'es-ES';
+        utter.rate = 0.90;
+        utter.pitch = 0.96;
 
-      currentAudioObj.onended = () => {
+        utter.onend = () => {
+          estado.botHablando = false;
+          setTimeout(() => {
+            if (!estado.escuchando) iniciarMicrofono();
+          }, 500);
+          if (callback) callback();
+        };
+        window.speechSynthesis.speak(utter);
+      } else if (callback) {
         estado.botHablando = false;
-        setTimeout(() => { if (!estado.escuchando) iniciarMicrofono(); }, 500);
-        if (callback) callback();
-      };
+        callback();
+      }
     }
 
     function iniciarSimulacion() {
@@ -487,16 +624,19 @@
       if (!nombre) { alert("Por favor, introduce tu nombre."); return; }
       
       estado.comercial = nombre;
+      estado.perfilKey = document.getElementById('selectPerfil').value;
       estado.nivelDificultad = document.getElementById('selectNivel').value;
+      
       estado.faseActual = 1;
       estado.pasoConversacional = 0;
+      estado.ultimaRespuestaBot = "";
       estado.itemsCompletados.clear();
       estado.objecionesResueltas = 0;
       estado.objecionesTotales = 0;
       estado.penalizadoPrecio = false;
-      estado.objecionActiva = false;
+      estado.objecionActiva = null;
 
-      document.getElementById('userInfo').innerText = `${estado.comercial} | Perfil: Enrique (Audio Real) | Nivel: ${estado.nivelDificultad.toUpperCase()}`;
+      document.getElementById('userInfo').innerText = `${estado.comercial} | Perfil: ${estado.perfilKey} | Nivel: ${estado.nivelDificultad.toUpperCase()}`;
       
       const panel = document.getElementById('checklistPanel');
       const simLayout = document.getElementById('simLayout');
@@ -513,9 +653,10 @@
 
       renderChecklist();
       
-      const res = perfilEnrique.respuestas.saludo;
-      addMessage('bot', res.texto);
-      reproducirAudioReal(res.audio);
+      const saludoBot = perfilesConfig[estado.perfilKey].saludo;
+      estado.ultimaRespuestaBot = saludoBot;
+      addMessage('bot', saludoBot);
+      hablarBot(saludoBot);
     }
 
     function enviarMensajeManual() {
@@ -537,14 +678,15 @@
         document.getElementById('penaltyNotice').style.display = 'block';
       }
 
-      // Gestión Objeción
       if (estado.objecionActiva) {
-        if (matchesAny(textNorm, ["046", "litro", "46 centimos", "acarrear", "enfriar", "puerta"])) {
+        if (matchesAny(textNorm, estado.objecionActiva.resolvedBy)) {
           estado.objecionesResueltas++;
-          estado.objecionActiva = false;
-          const resRes = perfilEnrique.respuestas.resuelta;
-          addMessage('bot', resRes.texto);
-          reproducirAudioReal(resRes.audio, () => evaluarProgresoFase());
+          estado.objecionActiva = null;
+          const res = "Ah, bueno... mmm... pues visto así de esa manera tiene usted toda la razón. Siga contándome.";
+          addMessage('bot', res);
+          hablarBot(res, () => {
+            evaluarProgresoFase();
+          });
           return;
         }
       }
@@ -552,48 +694,72 @@
       const faseConfig = checklistFases.find(f => f.fase === estado.faseActual);
       faseConfig.items.forEach(item => {
         if (!estado.itemsCompletados.has(item.id)) {
-          if (matchesAny(textNorm, item.keywords)) estado.itemsCompletados.add(item.id);
+          if (matchesAny(textNorm, item.keywords)) {
+            estado.itemsCompletados.add(item.id);
+          }
         }
       });
 
       renderChecklist();
 
-      let respuestaObj = perfilEnrique.respuestas.comodin;
+      let respuestaTexto = "";
 
       if (estado.faseActual === 1) {
         if (estado.pasoConversacional === 0) {
-          respuestaObj = perfilEnrique.respuestas.saludo;
+          respuestaTexto = "Ah... sí, sí, de Aquaservice... Por la prueba que nos dejaron la semana pasada. ¿Dígame?";
           estado.pasoConversacional = 1;
         } else if (estado.pasoConversacional === 1) {
-          respuestaObj = perfilEnrique.respuestas.decisor;
+          respuestaTexto = "Sí, claro... las decisiones en casa las tomamos nosotros directamente. Cuénteme.";
           estado.pasoConversacional = 2;
         } else {
-          respuestaObj = perfilEnrique.respuestas.cierre1;
+          respuestaTexto = "Vale, coménteme... ¿qué condiciones especiales son esas que me decía?";
         }
       } 
       else if (estado.faseActual === 2) {
-        if (matchesAny(textNorm, ["conocía", "conocia", "tele", "camion", "anuncios", "vecino"])) respuestaObj = perfilEnrique.respuestas.conocimiento;
-        else if (matchesAny(textNorm, ["supermercado", "super", "compraba", "acarrear", "coche", "cargar", "peso"])) respuestaObj = perfilEnrique.respuestas.habito;
-        else if (matchesAny(textNorm, ["cuantos", "litro", "litros", "personas", "botellas"])) respuestaObj = perfilEnrique.respuestas.consumo;
-        else respuestaObj = perfilEnrique.respuestas.experiencia;
+        if (matchesAny(textNorm, ["conocía", "conocia", "tele", "camion", "anuncios", "vecino"])) {
+          respuestaTexto = "Sí, de oídas... una vecina del bloque lo tiene y vemos los camiones por la calle.";
+        } else if (matchesAny(textNorm, ["supermercado", "super", "compraba", "acarrear", "coche", "cargar", "peso"])) {
+          respuestaTexto = "Pues antes venía mi hija a traernos las garrafas del súper... porque nosotros no podemos cargar con peso.";
+        } else if (matchesAny(textNorm, ["cuantos", "litro", "litros", "personas", "botellas"])) {
+          respuestaTexto = "Pues la botella de prueba justo nos ha durado una semana entera.";
+        } else {
+          respuestaTexto = "Pues el agua la verdad que nos ha gustado mucho... sale muy fresquita y es comodísima.";
+        }
       }
       else if (estado.faseActual === 3) {
-        respuestaObj = perfilEnrique.respuestas.servicio;
+        respuestaTexto = "Comprendo... ¿Y cómo funciona exactamente lo del reparto cada 28 días y la garantía del aparato?";
       }
       else if (estado.faseActual === 4) {
-        if (estado.itemsCompletados.has("plan_ahorro") && !estado.objecionActiva) {
-          estado.objecionActiva = true;
-          estado.objecionesTotales++;
-          respuestaObj = perfilEnrique.respuestas.objecion;
-        } else {
-          respuestaObj = perfilEnrique.respuestas.pideprecio;
-        }
+        respuestaTexto = "Entendido. A ver... dígame en cuánto se queda el precio final con el plan de ahorro.";
+      }
+
+      if (respuestaTexto === estado.ultimaRespuestaBot) {
+        respuestaTexto = "Entendido... Siga explicándome, que le escucho.";
+      }
+
+      estado.ultimaRespuestaBot = respuestaTexto;
+
+      const perfilObjeciones = perfilesConfig[estado.perfilKey].objeciones;
+      const objTrigger = perfilObjeciones.find(o => o.fase === estado.faseActual && !o.disparada && estado.itemsCompletados.has(o.triggerItem));
+
+      if (objTrigger && !estado.objecionActiva) {
+        objTrigger.disparada = true;
+        estado.objecionesTotales++;
+        estado.objecionActiva = objTrigger;
+        
+        setTimeout(() => {
+          addMessage('bot', objTrigger.texto);
+          hablarBot(objTrigger.texto);
+        }, 500);
+        return;
       }
 
       setTimeout(() => {
-        addMessage('bot', respuestaObj.texto);
-        reproducirAudioReal(respuestaObj.audio, () => evaluarProgresoFase());
-      }, 300);
+        addMessage('bot', respuestaTexto);
+        hablarBot(respuestaTexto, () => {
+          evaluarProgresoFase();
+        });
+      }, 500);
     }
 
     function evaluarProgresoFase() {
@@ -626,7 +792,10 @@
         const isDone = estado.itemsCompletados.has(item.id);
         const div = document.createElement('div');
         div.className = `chk-item ${isDone ? 'done' : ''}`;
-        div.innerHTML = `<span class="chk-icon">${isDone ? '✅' : '⚪'}</span><span>${item.desc}</span>`;
+        div.innerHTML = `
+          <span class="chk-icon">${isDone ? '✅' : '⚪'}</span>
+          <span>${item.desc}</span>
+        `;
         container.appendChild(div);
       });
     }
@@ -670,10 +839,21 @@
         <li><strong>Objeciones resueltas:</strong> ${estado.objecionesResueltas} de ${estado.objecionesTotales} (${Math.round(objPct)}%)</li>
         <li><strong>Penalización por precio prematuro:</strong> ${estado.penalizadoPrecio ? '-10 puntos' : 'Ninguna (0 pts)'}</li>
       `;
+
+      const historial = JSON.parse(localStorage.getItem('roleplay_history') || '[]');
+      historial.push({
+        fecha: new Date().toISOString(),
+        comercial: estado.comercial,
+        perfil: estado.perfilKey,
+        nivel: estado.nivelDificultad,
+        score: scoreFinal
+      });
+      localStorage.setItem('roleplay_history', JSON.stringify(historial));
     }
 
     function reiniciar() {
       document.getElementById('viewResults').classList.remove('active');
+      document.getElementById('viewSetup').classList.remove('active');
       document.getElementById('viewSetup').classList.add('active');
       document.getElementById('chatBox').innerHTML = "";
     }
