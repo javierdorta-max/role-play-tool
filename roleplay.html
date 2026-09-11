@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -392,12 +392,14 @@
 
     const perfilesConfig = {
       enrique: {
-        nombre: "Enrique",
+        nombre: "Enrique,"
         saludo: "Mmm... Hola, buenas tardes. Pasa, pasa... perdona que estoy aquí con los nietos liados.",
-        objeciones: [
-          { fase: 4, triggerItem: "plan_ahorro", texto: "Mmm... A ver... es que mi hija nos trae garrafas de 8 litros del súper a 1,60€ y para mí que nos sale bastante más barato que esto.", resolvedBy: ["046", "litro", "46 centimos", "acarrear", "enfriar", "puerta"] }
-        ]
-      },
+        memoria: { confianza:50, receptividad:50, impaciencia:20},
+          estados: {decisor:false,beneficio:false,consumo:false,valorConfirmado:false},
+        objeciones:[{ fase: 4, triggerItem: "plan_ahorro", texto: "Mmm... A ver... es que mi hija nos trae garrafas de 8 litros del súper a 1,60€ y para mí que nos sale bastante más barato que esto.", resolvedBy: ["046", "litro", "46 centimos", "acarrear", "enfriar", "puerta"] }
+
+      }]
+    },
       elizabeth: {
         nombre: "Elizabeth y Zacarías",
         saludo: "Hola... buenas tardes. Pase, pase... siéntese por aquí un momento.",
