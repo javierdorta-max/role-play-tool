@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Roleplay Aquaservice 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0052cc;
+      --primary-dark: #003d99;
+      --primary-light: #e6f0ff;
+      --accent: #00a8ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card-bg: #1e293b;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --border: #334155;
+        --primary-light: #1e3a8a;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Public Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 16px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    h1, h2, h3, .font-sora { font-family: 'Sora', sans-serif; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .sim-layout {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 16px;
+        transition: all 0.3s ease;
+      }
+      .sim-layout.senior-mode {
+        grid-template-columns: 1fr;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+    }
+
+    label { font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.9rem; }
+    input, select, button {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 1rem;
+      background: var(--card-bg);
+      color: var(--text);
+    }
+
+    button.btn-primary {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button.btn-primary:hover { background: var(--primary-dark); }
+
+    .chat-box {
+      height: 420px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg);
+    }
+
+    .msg {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+    }
+    .msg.bot {
+      align-self: flex-start;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+    }
+    .msg.user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: white;
+    }
+
+    .mic-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .mic-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mic-btn.recording {
+      background: var(--danger);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    .checklist-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .chk-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .chk-item.done { color: var(--success); font-weight: 600; }
+
+    .score-big {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span>💧 Roleplay Aquaservice</span>
+    </div>
+    <div id="userInfo" style="font-size: 0.875rem; color: var(--text-muted);"></div>
+  </header>
+
+  <div id="viewSetup" class="view active">
+    <div class="card" style="max-width: 550px; margin: 40px auto;">
+      <h2 style="margin-bottom: 16px;">Configuración de la Sesión</h2>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <label for="inputName">Nombre del Comercial:</label>
+          <input type="text" id="inputName" placeholder="Ej. Miguel Ángel" />
+        </div>
+        <div>
+          <label for="selectNivel">Nivel de Entrenamiento:</label>
+          <select id="selectNivel">
+            <option value="junior">Junior (Ver checklist y pistas en tiempo real)</option>
+            <option value="senior">Senior (Modo examen: sin pistas visuales)</option>
+          </select>
+        </div>
+        <div>
+          <label for="selectPerfil">Perfil de Cliente (14 Casos Reales):</label>
+          <select id="selectPerfil">
+            <option value="enrique">Enrique (Nietos liados, compara con garrafas 8L del súper)</option>
+            <option value="elizabeth">Elizabeth y Zacarías (Dolores rodilla/mano, exigen salud/policarbonato)</option>
+            <option value="francisca">Francisca (Jubilada, asustada por los 79€ de fianza)</option>
+            <option value="raquel">Raquel y Pareja (Falta de espacio en cocina/galería)</option>
+            <option value="domingo">Domingo (Calle estrecha, niega 12 meses y teme subidas)</option>
+            <option value="juancarlos">Juan Carlos y Leticia (Impaciente, exige precio y pago directo)</option>
+            <option value="josecarlos">José Carlos (Pensión 700€, rechaza por "perro/trampa")</option>
+            <option value="antonio">Antonio el Manitas (Peugeot 2008, consumo elevado)</option>
+            <option value="josemanuel">José Manuel - Sanito90 (Sector seguros, pago 36.90€ hoy)</option>
+            <option value="maricarmen">Mari Carmen (Dudas con "otra trampa" y cobro en mano)</option>
+            <option value="constantino">Constantino (Exige detalle 28 días, app y botellines)</option>
+            <option value="eneli">Eneli (Caso Rubén - Dudas con permanencia de 6 vs 12 meses)</option>
+            <option value="inma_cliente">Cliente de Inma (Venta presencial, compara con tienda)</option>
+            <option value="juan_jose">Juan (Caso José - Pide claridad total en la cuota)</option>
+          </select>
+        </div>
+        <button id="btnStart" class="btn-primary" onclick="iniciarSimulacion()">Iniciar Roleplay</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewSim" class="view">
+    <div id="simLayout" class="sim-layout">
+      <div>
+        <div class="card" style="padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <span id="currentPhaseTitle" class="font-sora" style="font-weight: 700; color: var(--primary);">Fase 1: Presentación</span>
+          <span id="phaseProgress" style="font-size: 0.85rem; font-weight: 600;">0% Completado</span>
+        </div>
+        <div id="chatBox" class="chat-box"></div>
+        <div class="mic-controls">
+          <button id="btnMic" class="mic-btn" onclick="toggleMic()">🎤</button>
+          <input type="text" id="manualText" placeholder="O escribe aquí tu respuesta..." onkeydown="if(event.key==='Enter') enviarMensajeManual()" />
+          <button class="btn-primary" style="width: auto; padding: 12px 20px;" onclick="enviarMensajeManual()">Enviar</button>
+        </div>
+      </div>
+
+      <div id="checklistPanel" class="checklist-panel">
+        <h3 class="font-sora" style="font-size: 1rem; margin-bottom: 12px;">Objetivos de la Fase</h3>
+        <div id="checklistItems"></div>
+        <div id="penaltyNotice" style="display:none; margin-top:16px; padding:8px; background:#fee2e2; color:#b91c1c; border-radius:6px; font-size:0.75rem; font-weight:600;">
+          ⚠️ Penalización: Precio mencionado antes de la Fase de Servicio (-10 pts)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewResults" class="view">
+    <div class="card" style="max-width: 600px; margin: 20px auto; text-align: center;">
+      <h2 class="font-sora">Evaluación de la Sesión</h2>
+      <div id="scoreDisplay" class="score-big">0</div>
+      <p id="scoreFeedback" style="color: var(--text-muted); margin-bottom: 20px;"></p>
+      
+      <div style="text-align: left; margin-bottom: 20px;">
+        <h3>Desglose de Puntuación:</h3>
+        <ul id="scoreBreakdown" style="padding-left: 20px; margin-top: 8px; font-size: 0.95rem;"></ul>
+      </div>
+
+      <button class="btn-primary" onclick="reiniciar()">Nueva Sesión</button>
+    </div>
+  </div>
+
+  <script>
+    function norm(str) {
+      if (!str) return '';
+      let text = str.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const numMap = {
+        "33 90": "3390", "33,90": "3390", "33.90": "3390", "34,90": "3490", "3490": "3490",
+        "36 90": "3690", "36,90": "3690", "37,90": "3790", "41,90": "4190",
+        "15 euros": "15", "quince": "15", "79 euros": "79", "80 euros": "80",
+        "6 meses": "6meses", "seis meses": "6meses", "12 meses": "12meses"
+      };
+
+      Object.keys(numMap).forEach(k => {
+        text = text.replace(new RegExp(k, 'g'), numMap[k]);
+      });
+
+      return text;
+    }
+
+    function matchesAny(textNorm, keywords) {
+      return keywords.some(kw => {
+        const normKw = norm(kw);
+        if (textNorm.includes(normKw)) return true;
+        const words = normKw.split(' ').filter(w => w.length > 3);
+        if (words.length > 1) {
+          return words.every(w => textNorm.includes(w));
+        }
+        return false;
+      });
+    }
+
+    const checklistFases = [
+      {
+        fase: 1,
+        titulo: "Presentación",
+        items: [
+          { id: "saludo", desc: "Identificación, empresa y gancho inicial", keywords: [
+              "hola", "buenas", "soy", "aquaservice", "prueba", "disfrutando", "encargado", "responsable", 
+              "prioritarias", "ventajosas", "encantar", "tutearos", "tutear", "jovenes"
+          ]},
+          { id: "autorizador", desc: "Confirma autorizador de prueba/decisor", keywords: [
+              "autorizo", "autorizo la prueba", "decision", "mando", "decide", "usted", "titular", "responsable", "esposo", "marido"
+          ]}
+        ]
+      },
+      {
+        fase: 2,
+        titulo: "Investigación (I+D)",
+        items: [
+          { id: "conocimiento", desc: "Indaga conocimiento previo de marca", keywords: [
+              "conocía", "conocia", "conociais", "tele", "camion", "anuncios", "vecino", "furgoneta", "escuchado", "visto"
+          ]},
+          { id: "habito", desc: "Hábito de compra previo (dolor de cargar)", keywords: [
+              "supermercado", "super", "compraba", "marca", "mercadona", "carrefour", "acarrear", "coche", "embotellada", "grifo", "jarras", "cargar", "peso", "rodilla", "mano"
+          ]},
+          { id: "miembros", desc: "Consenso pedagógico (1 Litro/persona/día)", keywords: [
+              "cuantos", "cuatro", "tres", "dos", "personas", "litro", "litros", "semanal", "botellas", "3 botellas", "4 botellas", "vacia", "durara", "dias", "nietos"
+          ]},
+          { id: "experiencia", desc: "Puntos fuertes de la prueba", keywords: [
+              "prueba", "gustado", "fresquita", "infusiones", "caliente", "comodidad", "sabor", "ligera", "cuidarse", "salud", "sodio", "medicos"
+          ]}
+        ]
+      },
+      {
+        fase: 3,
+        titulo: "Servicio y Sostenibilidad",
+        items: [
+          { id: "logistica", desc: "Reparto programado (28 días) y entrega", keywords: ["28", "semanas", "programado", "suben", "piso", "puerta", "mes", "llevamos", "galeria"] },
+          { id: "urgencias", desc: "Avisos urgentes gratuitos (2/año)", keywords: ["urgentes", "urgencia", "entregas", "horas", "48h", "gratuitas", "aviso"] },
+          { id: "maquina", desc: "Garantía de por vida, regulación y espacio", keywords: ["garantia", "termostato", "destornillador", "llave", "azul", "rojo", "espacio", "sobremesa", "mantenimiento", "policarbonato"] },
+          { id: "sostenibilidad", desc: "Medioambiente y Economía Circular", keywords: ["reciclar", "plastico", "vacias", "sostenible", "planeta", "residuos", "envases", "microplasticos"] },
+          { id: "app", desc: "Autogestión integral por la APP", keywords: ["aplicacion", "app", "movil", "autogestionar", "pausar", "bajar", "subir", "cliente"] }
+        ]
+      },
+      {
+        fase: 4,
+        titulo: "Promoción y Cierre",
+        items: [
+          { id: "elimina_fianza", desc: "Elimina Fianza/Depósito (79€/80€)", keywords: ["fianza", "79", "80", "deposito", "cero", "gratis", "presencialmente", "cobro", "elimino"] },
+          { id: "elimina_cuota", desc: "Elimina Cuota de servicio (15€/mes)", keywords: ["15", "quince", "cuota", "servicio", "quito", "gratis", "cero"] },
+          { id: "plan_ahorro", desc: "Plan Flexible (Grande + Botellines)", keywords: ["plan", "3390", "3690", "2990", "3490", "4190", "botellines", "50", "aguitas", "litro", "046"] },
+          { id: "compromiso", desc: "Permanencia flexible (6 o 12 meses)", keywords: ["permanencia", "6meses", "12meses", "ataduras", "ano", "seis", "prueba"] },
+          { id: "pago_cobro", desc: "Método de Pago (IBAN, Bizum, SMS, Efectivo)", keywords: ["iban", "cuenta", "bizum", "efectivo", "tarjeta", "sms", "enlace", "10"] },
+          { id: "aquamigo_cortesia", desc: "Aquamigo y Agua de cortesía", keywords: ["aquamigo", "10", "descuento", "regalar", "cortesia", "regalo", "amigo"] }
+        ]
+      }
+    ];
+
+    const itemNegativo = { 
+      id: "no_cede_precio", 
+      keywords: ["3390", "3690", "2990", "3490", "15", "79", "80"], 
+      penalizacion: 10 
+    };
+
+    const perfilesConfig = {
+      enrique: {
+        nombre: "Enrique",
+        saludo: "Hola, buenas tardes. Sí, dime... perdona, que tengo a los nietos por aquí y hay un poco de jaleo.",
+        memoriaInicial: {
+          confianza: 50,
+          receptividad: 50,
+          impaciencia: 15,
+          turnos: 0,
+          hechos: {
+            decisor: false,
+            experiencia: false,
+            consumo: false,
+            habito: false,
+            carga: false,
+            precioPedido: false,
+            valorConstruido: false
+          }
+        },
+        objeciones: [
+          { fase: 4, triggerItem: "plan_ahorro", texto: "A ver... es que mi hija nos trae garrafas de 8 litros del súper a 1,60 € y, sinceramente, yo creo que así nos sale bastante más barato.", resolvedBy: ["046", "litro", "46 centimos", "acarrear", "enfriar", "puerta", "comodidad", "reparto"] }
+        ]
+      },
+      elizabeth: {
+        nombre: "Elizabeth y Zacarías",
+        saludo: "Hola... buenas tardes. Pase, pase... siéntese por aquí un momento.",
+        objeciones: [
+          { fase: 2, triggerItem: "habito", texto: "Eh... a ver, a nosotros lo que nos preocupa es que yo tengo un problema feo en la rodilla y él en la mano... y cargar garrafas del súper es un suplicio.", resolvedBy: ["comodidad", "puerta", "suben", "llevamos", "cero esfuerzo"] },
+          { fase: 3, triggerItem: "sostenibilidad", texto: "Y... mmm... una pregunta técnica... ¿las garrafas estas no soltarán microplásticos con el calor como las de la calle?", resolvedBy: ["policarbonato", "biberones", "50 usos", "calor", "no suelta"] }
+        ]
+      },
+      francisca: {
+        nombre: "Francisca",
+        saludo: "Sí, sí... yo misma... Dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "elimina_fianza", texto: "Uy... cuántos dineros... 79€ de fianza así de golpe suena muy fuerte... los jubilados no sé si llegaremos a pagarlo.", resolvedBy: ["elimino", "deposito", "gratis", "portar", "ningun tipo", "cero"] }
+        ]
+      },
+      raquel: {
+        nombre: "Raquel",
+        saludo: "Hola... buenas tardes... coménteme.",
+        objeciones: [
+          { fase: 3, triggerItem: "maquina", texto: "Eh... es que el aparato este es muy grande y en la cocina no tenemos nada de espacio... está en la galería cortando el paso.", resolvedBy: ["sobremesa", "pequena", "freidora", "encimera", "pequenita"] }
+        ]
+      },
+      domingo: {
+        nombre: "Domingo",
+        saludo: "Mmm... Sí, hola... dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "compromiso", texto: "A mí no me hables de 12 meses de contrato... que yo estuve apuntado hace tiempo y cada mes me subían cosas en la letra pequeña.", resolvedBy: ["6meses", "seis", "ataduras", "fijo", "respeto"] }
+        ]
+      },
+      juancarlos: {
+        nombre: "Juan Carlos y Leticia",
+        saludo: "Hola... Sí, Juan Carlos al habla. Dígame rápido.",
+        objeciones: [
+          { fase: 1, triggerItem: "saludo", texto: "Sí... a ver, a mí me parece bien lo del agua, pero... ¿a quién le pago yo esto después y cuánto me va a costar exactamente?", resolvedBy: ["servicio", "promocion", "explicar", "paso a paso"] }
+        ]
+      },
+      josecarlos: {
+        nombre: "José Carlos",
+        saludo: "Buenas tardes... dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "plan_ahorro", texto: "Uf... mmm... a ver, yo es que con una paga de 700€ esto lo veo mucha tela... para mí es meterse en un perro grande.", resolvedBy: ["3390", "diario", "sustituir", "super", "ahorro"] }
+        ]
+      },
+      antonio: {
+        nombre: "Antonio el Manitas",
+        saludo: "Hola... buenas tardes. Pasa, pasa... venía ahora mismo de cortar las escaleras.",
+        objeciones: [
+          { fase: 2, triggerItem: "miembros", texto: "A ver... nosotros somos dos en casa, pero esta semana con los chiquillos hemos bebido agua a cascoporro.", resolvedBy: ["litro", "consenso", "4 botellas", "3 botellas", "ajustar"] }
+        ]
+      },
+      josemanuel: {
+        nombre: "José Manuel (Sanito90)",
+        saludo: "Buenas tardes... coméntame.",
+        objeciones: [
+          { fase: 4, triggerItem: "pago_cobro", texto: "Mmm... vale, ¿y cómo lo dejamos pagado hoy? ¿Puedo dártelo en efectivo o prefieres tarjeta?", resolvedBy: ["efectivo", "tarjeta", "40", "cambio", "cortesia"] }
+        ]
+      },
+      maricarmen: {
+        nombre: "Mari Carmen",
+        saludo: "Hola... dígame.",
+        objeciones: [
+          { fase: 4, triggerItem: "plan_ahorro", texto: "A mí no me asustes con números... que me quito de una trampa y me meto en otra...", resolvedBy: ["regalo", "cortesia", "noviembre", "pagado", "primer mes"] }
+        ]
+      },
+      constantino: {
+        nombre: "Constantino",
+        saludo: "Hola... muy buenas tardes. ¿Dígame?",
+        objeciones: [
+          { fase: 3, triggerItem: "logistica", texto: "Mmm... a ver, explícame bien cómo va eso de los repartos programados cada 28 días y las entregas urgentes.", resolvedBy: ["28", "programado", "4 semanas", "urgencia", "48h"] }
+        ]
+      },
+      eneli: {
+        nombre: "Eneli",
+        saludo: "Buenas tardes... coménteme.",
+        objeciones: [
+          { fase: 4, triggerItem: "compromiso", texto: "Yo es que no me quiero atar un año entero... prefiero probarlo menos tiempo.", resolvedBy: ["6meses", "seis", "prueba", "ataduras"] }
+        ]
+      },
+      inma_cliente: {
+        nombre: "Cliente Presencial",
+        saludo: "Hola... buenas tardes... sí, dígame.",
+        objeciones: [
+          { fase: 2, triggerItem: "habito", texto: "Yo es que compro el agua en la tienda de abajo y ya me he acostumbrado a eso.", resolvedBy: ["comodidad", "peso", "puerta", "enfriar"] }
+        ]
+      },
+      juan_jose: {
+        nombre: "Juan",
+        saludo: "Dígame... buenas tardes.",
+        objeciones: [
+          { fase: 4, triggerItem: "elimina_cuota", texto: "Mmm... ¿y eso de los 15€ de cuota de servicio hay que pagarlo siempre o cómo va?", resolvedBy: ["quito", "elimino", "gratis", "cero", "por vida"] }
+        ]
+      }
+    };
+
+    let estado = {
+      comercial: "",
+      perfilKey: "enrique",
+      nivelDificultad: "junior",
+      faseActual: 1,
+      pasoConversacional: 0,
+      ultimaRespuestaBot: "",
+      itemsCompletados: new Set(),
+      objecionesResueltas: 0,
+      objecionesTotales: 0,
+      penalizadoPrecio: false,
+      objecionActiva: null,
+      escuchando: false,
+      botHablando: false,
+      transcriptAcumulado: "",
+      cliente: null
+    };
+
+    let recognition = null;
+    let silenceTimer = null;
+
+
+    function elegir(opciones) {
+      return opciones[Math.floor(Math.random() * opciones.length)];
+    }
+
+    function limitar(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function crearEstadoCliente() {
+      if (estado.perfilKey === 'enrique') {
+        const base = perfilesConfig.enrique.memoriaInicial;
+        return {
+          confianza: base.confianza,
+          receptividad: base.receptividad,
+          impaciencia: base.impaciencia,
+          turnos: 0,
+          hechos: { ...base.hechos }
+        };
+      }
+      return { confianza: 50, receptividad: 50, impaciencia: 15, turnos: 0, hechos: {} };
+    }
+
+    function parecePregunta(texto) {
+      return /\?|\b(que|qué|como|cómo|cuanto|cuánto|quien|quién|donde|dónde|compráis|compras|sois|son|utilizáis|usas|usáis|decide|decidís|gusta|gustado|dura|durado)\b/i.test(texto);
+    }
+
+    function generarRespuestaEnrique(texto, textNorm) {
+      const c = estado.cliente || crearEstadoCliente();
+      estado.cliente = c;
+      c.turnos += 1;
+
+      const palabras = textNorm.split(' ').filter(Boolean).length;
+      const pregunta = parecePregunta(texto);
+
+      // Un discurso muy largo sin pregunta hace que Enrique pierda paciencia.
+      if (palabras > 55 && !pregunta) c.impaciencia += 18;
+      else if (palabras > 35 && !pregunta) c.impaciencia += 10;
+      else if (pregunta) c.impaciencia -= 3;
+
+      // Si el comercial enlaza varias intervenciones sin investigar, Enrique pide concreción.
+      c.impaciencia = limitar(c.impaciencia, 0, 100);
+      c.confianza = limitar(c.confianza, 0, 100);
+      c.receptividad = limitar(c.receptividad, 0, 100);
+
+      const pidePrecio = matchesAny(textNorm, [
+        'precio', 'cuanto cuesta', 'cuánto cuesta', 'cuanto sale', 'cuánto sale', 'tarifa',
+        'plan ahorro', 'euros', 'al mes', 'cuota'
+      ]);
+
+      const preguntaDecisor = matchesAny(textNorm, [
+        'decision', 'decide', 'autorizo', 'autorizó', 'titular', 'responsable',
+        'lo decides tu', 'lo decidis', 'quien decide', 'quién decide'
+      ]);
+
+      const preguntaExperiencia = matchesAny(textNorm, [
+        'que tal la prueba', 'qué tal la prueba', 'que os ha parecido', 'qué os ha parecido',
+        'que te ha gustado', 'qué te ha gustado', 'experiencia', 'fresquita', 'agua caliente', 'gustado'
+      ]);
+
+      const preguntaConsumo = matchesAny(textNorm, [
+        'cuantos sois', 'cuántos sois', 'personas', 'cuanto bebeis', 'cuánto bebéis',
+        'cuantas botellas', 'cuántas botellas', 'garrafas', 'durado', 'semana', 'consumo'
+      ]);
+
+      const preguntaHabito = matchesAny(textNorm, [
+        'supermercado', 'super', 'marca', 'que agua comprais', 'qué agua compráis',
+        'agua embotellada', 'comprabais', 'compráis ahora', 'situacion actual', 'situación actual'
+      ]);
+
+      const preguntaCarga = matchesAny(textNorm, [
+        'acarrear', 'cargar', 'peso', 'quien trae', 'quién trae', 'quien carga', 'quién carga',
+        'subir las garrafas', 'transportar'
+      ]);
+
+      const hablaServicio = matchesAny(textNorm, [
+        'reparto', '28 dias', '28 días', 'urgencia', 'garantia', 'garantía', 'dispensador',
+        'aplicacion', 'aplicación', 'app', 'recogemos', 'envases', 'puerta'
+      ]);
+
+      const hablaValor = matchesAny(textNorm, [
+        'comodidad', 'olvidarte de cargar', 'no cargar', 'puerta de casa', 'agua fria', 'agua fría',
+        'calidad', 'sostenibilidad', 'garantia', 'garantía', 'urgencia', 'reparto programado'
+      ]);
+
+      if (hablaValor) {
+        c.hechos.valorConstruido = true;
+        c.receptividad += 5;
+      }
+
+      if (preguntaDecisor) {
+        c.hechos.decisor = true;
+        c.confianza += 4;
+        return elegir([
+          'Sí, sí, esto lo decidimos nosotros en casa. Si me encaja, no tengo que consultarlo con nadie más.',
+          'Sí. La decisión la tomamos nosotros directamente. Cuéntame.',
+          'Sí, por esa parte no hay problema. Lo podemos decidir nosotros.'
+        ]);
+      }
+
+      if (preguntaExperiencia) {
+        c.hechos.experiencia = true;
+        c.receptividad += 6;
+        return elegir([
+          'La verdad es que el agua fresquita nos ha gustado bastante. Y con los nietos es cómoda, aunque están todo el día queriendo tocar el grifo.',
+          'Bien, bastante bien. Sobre todo por tener el agua fría directamente. Los niños están encantados, demasiado incluso.',
+          'Pues bien. Lo que más noto es la comodidad de tenerla fría ahí mismo. Con los nietos, eso sí, el grifo les llama muchísimo la atención.'
+        ]);
+      }
+
+      if (preguntaConsumo) {
+        c.hechos.consumo = true;
+        c.confianza += 3;
+        return elegir([
+          'La botella de la prueba nos ha durado más o menos una semana. Cuando vienen los nietos se gasta bastante más.',
+          'Más o menos una garrafa a la semana, diría yo. Depende de si están los nietos en casa.',
+          'Esta semana prácticamente hemos terminado la garrafa. Con los niños aquí bebemos bastante más.'
+        ]);
+      }
+
+      if (preguntaHabito) {
+        c.hechos.habito = true;
+        c.confianza += 3;
+        return elegir([
+          'Nosotros normalmente tiramos de garrafas del súper. Mi hija suele traernos las de ocho litros.',
+          'Hasta ahora, supermercado. No somos de una marca concreta; solemos comprar garrafas grandes.',
+          'Lo normal es que mi hija nos traiga agua del súper, garrafas de ocho litros.'
+        ]);
+      }
+
+      if (preguntaCarga) {
+        c.hechos.carga = true;
+        c.receptividad += 7;
+        return elegir([
+          'Normalmente nos las trae mi hija. Nosotros ya intentamos no andar cargando con garrafas.',
+          'Eso se lo come casi siempre mi hija, la verdad. El peso es precisamente lo más incómodo.',
+          'Las suele traer mi hija, porque a nosotros cargar con ellas ya nos resulta bastante pesado.'
+        ]);
+      }
+
+      if (pidePrecio) {
+        c.hechos.precioPedido = true;
+        if (!c.hechos.valorConstruido && estado.faseActual < 4) {
+          c.impaciencia += 5;
+          return elegir([
+            'Sí, pero antes de seguir... dime una cosa: ¿de cuánto dinero estamos hablando?',
+            'Vale, te sigo, pero al final lo que necesito saber es cuánto me va a costar.',
+            'Entiendo. Pero ve diciéndome el precio también, que es lo que al final me va a hacer decidir.'
+          ]);
+        }
+        return elegir([
+          'Vale, ahora sí. Dime en cuánto se queda todo al mes.',
+          'Bien, con todo eso claro, ¿cuál sería el precio final?',
+          'De acuerdo. Entonces, ¿de cuánto estamos hablando al mes?'
+        ]);
+      }
+
+      if (hablaServicio) {
+        c.receptividad += 3;
+        if (matchesAny(textNorm, ['reparto', '28 dias', '28 días'])) {
+          return elegir([
+            'Vale. ¿Y si un mes gastamos más de lo previsto, os puedo pedir agua antes?',
+            'Entiendo lo de cada cuatro semanas. ¿Y si me quedo corto entre un reparto y otro?',
+            'Bien. Entonces el reparto va programado. ¿Y si necesito más agua antes?'
+          ]);
+        }
+        if (matchesAny(textNorm, ['garantia', 'garantía', 'dispensador'])) {
+          return elegir([
+            'Eso me da tranquilidad. ¿Y si el aparato se estropea, venís vosotros?',
+            'Vale, o sea que si falla el dispensador no me tengo que buscar la vida yo, ¿no?',
+            'Bien. Lo de la garantía sí me interesa. ¿Os encargáis vosotros de una avería?'
+          ]);
+        }
+        return elegir([
+          'Vale, eso lo entiendo. Sigue.',
+          'Bien, hasta ahí te sigo.',
+          'De acuerdo. ¿Qué más incluye el servicio?'
+        ]);
+      }
+
+      if (c.impaciencia >= 55 && !c.hechos.precioPedido) {
+        c.hechos.precioPedido = true;
+        return elegir([
+          'Perdona que te corte, pero ¿me puedes decir ya más o menos de cuánto estamos hablando?',
+          'Sí, sí, te entiendo... pero vamos al precio, que es lo que necesito saber.',
+          'Vale, pero no me des muchas vueltas: dime cuánto costaría y ya lo valoro.'
+        ]);
+      }
+
+      if (pregunta) {
+        c.confianza += 1;
+        return elegir([
+          'Sí... te sigo. Pregúntame.',
+          'Claro, dime.',
+          'Sí, sí. ¿Qué necesitas saber?'
+        ]);
+      }
+
+      return elegir([
+        'Vale... te sigo.',
+        'Sí, entiendo. Continúa.',
+        'De acuerdo. Cuéntame.',
+        'Ajá... sí, sí.'
+      ]);
+    }
+
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'es-ES';
+
+      recognition.onresult = (event) => {
+        if (estado.botHablando) return;
+
+        clearTimeout(silenceTimer);
+        let interim = '';
+        let final = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            final += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+
+        if (final) {
+          estado.transcriptAcumulado += ' ' + final;
+        }
+
+        silenceTimer = setTimeout(() => {
+          if ((estado.transcriptAcumulado.trim() || interim.trim()) && !estado.botHablando) {
+            const textoEnviar = (estado.transcriptAcumulado + ' ' + interim).trim();
+            estado.transcriptAcumulado = "";
+            detenerMicrofono();
+            procesarEntradaUsuario(textoEnviar);
+          }
+        }, 1100);
+      };
+
+      recognition.onerror = (err) => {
+        console.warn("Speech Rec Error:", err);
+        detenerMicrofono();
+      };
+
+      recognition.onend = () => {
+        if (estado.escuchando && !estado.botHablando) {
+          try { recognition.start(); } catch(e) {}
+        }
+      };
+    }
+
+    function toggleMic() {
+      if (!recognition) {
+        alert("Tu navegador no soporta Web Speech API. Usa Google Chrome o Edge.");
+        return;
+      }
+      if (estado.escuchando) {
+        detenerMicrofono();
+      } else {
+        iniciarMicrofono();
+      }
+    }
+
+    function iniciarMicrofono() {
+      if (estado.botHablando) return;
+      estado.escuchando = true;
+      estado.transcriptAcumulado = "";
+      document.getElementById('btnMic').classList.add('recording');
+      try { recognition.start(); } catch(e){}
+    }
+
+    function detenerMicrofono() {
+      estado.escuchando = false;
+      document.getElementById('btnMic').classList.remove('recording');
+      try { recognition.stop(); } catch(e){}
+    }
+
+    function hablarBot(texto, callback) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        detenerMicrofono();
+        estado.botHablando = true;
+
+        let textoLimpioParaVoz = texto
+          .replace(/Mmm\.\.\./gi, '')
+          .replace(/Eh\.\.\./gi, '')
+          .replace(/Uf\.\.\./gi, '')
+          .replace(/Ah\.\.\./gi, '')
+          .replace(/\.\.\./g, ', ')
+          .trim();
+
+        const utter = new SpeechSynthesisUtterance(textoLimpioParaVoz);
+        utter.lang = 'es-ES';
+
+        // Elegimos una voz española disponible y variamos levemente el ritmo para evitar monotonía.
+        const voces = window.speechSynthesis.getVoices();
+        const vozES = voces.find(v => /^es[-_]/i.test(v.lang) && /male|jorge|diego|enrique|pablo/i.test(v.name))
+          || voces.find(v => /^es[-_]/i.test(v.lang));
+        if (vozES) utter.voice = vozES;
+        utter.rate = 0.92 + (Math.random() * 0.08 - 0.04);
+        utter.pitch = 0.94 + (Math.random() * 0.06 - 0.03);
+
+        utter.onend = () => {
+          estado.botHablando = false;
+          setTimeout(() => {
+            if (!estado.escuchando) iniciarMicrofono();
+          }, 500);
+          if (callback) callback();
+        };
+        window.speechSynthesis.speak(utter);
+      } else if (callback) {
+        estado.botHablando = false;
+        callback();
+      }
+    }
+
+    function iniciarSimulacion() {
+      const nombre = document.getElementById('inputName').value.trim();
+      if (!nombre) { alert("Por favor, introduce tu nombre."); return; }
+      
+      estado.comercial = nombre;
+      estado.perfilKey = document.getElementById('selectPerfil').value;
+      estado.nivelDificultad = document.getElementById('selectNivel').value;
+      
+      estado.faseActual = 1;
+      estado.pasoConversacional = 0;
+      estado.ultimaRespuestaBot = "";
+      estado.itemsCompletados.clear();
+      estado.objecionesResueltas = 0;
+      estado.objecionesTotales = 0;
+      estado.penalizadoPrecio = false;
+      estado.objecionActiva = null;
+      estado.cliente = crearEstadoCliente();
+
+      // Las objeciones deben poder dispararse de nuevo en cada sesión.
+      perfilesConfig[estado.perfilKey].objeciones.forEach(o => { o.disparada = false; });
+
+      document.getElementById('userInfo').innerText = `${estado.comercial} | Perfil: ${estado.perfilKey} | Nivel: ${estado.nivelDificultad.toUpperCase()}`;
+      
+      const panel = document.getElementById('checklistPanel');
+      const simLayout = document.getElementById('simLayout');
+      if (estado.nivelDificultad === 'senior') {
+        panel.style.display = 'none';
+        simLayout.classList.add('senior-mode');
+      } else {
+        panel.style.display = 'block';
+        simLayout.classList.remove('senior-mode');
+      }
+
+      document.getElementById('viewSetup').classList.remove('active');
+      document.getElementById('viewSim').classList.add('active');
+
+      renderChecklist();
+      
+      const saludoBot = perfilesConfig[estado.perfilKey].saludo;
+      estado.ultimaRespuestaBot = saludoBot;
+      addMessage('bot', saludoBot);
+      hablarBot(saludoBot);
+    }
+
+    function enviarMensajeManual() {
+      const input = document.getElementById('manualText');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = "";
+      procesarEntradaUsuario(text);
+    }
+
+    function procesarEntradaUsuario(texto) {
+      if (estado.botHablando) return;
+
+      addMessage('user', texto);
+      const textNorm = norm(texto);
+
+      if (estado.faseActual < 4 && matchesAny(textNorm, itemNegativo.keywords)) {
+        estado.penalizadoPrecio = true;
+        document.getElementById('penaltyNotice').style.display = 'block';
+      }
+
+      if (estado.objecionActiva) {
+        if (matchesAny(textNorm, estado.objecionActiva.resolvedBy)) {
+          estado.objecionesResueltas++;
+          estado.objecionActiva = null;
+          if (estado.perfilKey === 'enrique' && estado.cliente) {
+            estado.cliente.receptividad = limitar(estado.cliente.receptividad + 12, 0, 100);
+            estado.cliente.confianza = limitar(estado.cliente.confianza + 8, 0, 100);
+          }
+          const res = estado.perfilKey === 'enrique'
+            ? elegir([
+                "Vale... así sí lo entiendo mejor. No es solo comparar el precio de la garrafa.",
+                "Bien, visto así tiene más sentido. Sigue, que te escucho.",
+                "De acuerdo. Si meto también la comodidad y el reparto en la comparación, cambia la cosa."
+              ])
+            : "Ah, bueno... mmm... pues visto así de esa manera tiene usted toda la razón. Siga contándome.";
+          addMessage('bot', res);
+          hablarBot(res, () => {
+            evaluarProgresoFase();
+          });
+          return;
+        }
+      }
+
+      const faseConfig = checklistFases.find(f => f.fase === estado.faseActual);
+      faseConfig.items.forEach(item => {
+        if (!estado.itemsCompletados.has(item.id)) {
+          if (matchesAny(textNorm, item.keywords)) {
+            estado.itemsCompletados.add(item.id);
+          }
+        }
+      });
+
+      renderChecklist();
+
+      let respuestaTexto = "";
+
+      if (estado.perfilKey === 'enrique') {
+        respuestaTexto = generarRespuestaEnrique(texto, textNorm);
+      } else if (estado.faseActual === 1) {
+        if (estado.pasoConversacional === 0) {
+          respuestaTexto = "Ah... sí, sí, de Aquaservice... Por la prueba que nos dejaron la semana pasada. ¿Dígame?";
+          estado.pasoConversacional = 1;
+        } else if (estado.pasoConversacional === 1) {
+          respuestaTexto = "Sí, claro... las decisiones en casa las tomamos nosotros directamente. Cuénteme.";
+          estado.pasoConversacional = 2;
+        } else {
+          respuestaTexto = "Vale, coménteme... ¿qué condiciones especiales son esas que me decía?";
+        }
+      } 
+      else if (estado.faseActual === 2) {
+        if (matchesAny(textNorm, ["conocía", "conocia", "tele", "camion", "anuncios", "vecino"])) {
+          respuestaTexto = "Sí, de oídas... una vecina del bloque lo tiene y vemos los camiones por la calle.";
+        } else if (matchesAny(textNorm, ["supermercado", "super", "compraba", "acarrear", "coche", "cargar", "peso"])) {
+          respuestaTexto = "Pues antes venía mi hija a traernos las garrafas del súper... porque nosotros no podemos cargar con peso.";
+        } else if (matchesAny(textNorm, ["cuantos", "litro", "litros", "personas", "botellas"])) {
+          respuestaTexto = "Pues la botella de prueba justo nos ha durado una semana entera.";
+        } else {
+          respuestaTexto = "Pues el agua la verdad que nos ha gustado mucho... sale muy fresquita y es comodísima.";
+        }
+      }
+      else if (estado.faseActual === 3) {
+        respuestaTexto = "Comprendo... ¿Y cómo funciona exactamente lo del reparto cada 28 días y la garantía del aparato?";
+      }
+      else if (estado.faseActual === 4) {
+        respuestaTexto = "Entendido. A ver... dígame en cuánto se queda el precio final con el plan de ahorro.";
+      }
+
+      if (respuestaTexto === estado.ultimaRespuestaBot) {
+        respuestaTexto = estado.perfilKey === 'enrique'
+          ? elegir(["Sí... te sigo.", "Vale, continúa.", "Ajá... dime."])
+          : "Entendido... Siga explicándome, que le escucho.";
+      }
+
+      estado.ultimaRespuestaBot = respuestaTexto;
+
+      const perfilObjeciones = perfilesConfig[estado.perfilKey].objeciones;
+      const objTrigger = perfilObjeciones.find(o => o.fase === estado.faseActual && !o.disparada && estado.itemsCompletados.has(o.triggerItem));
+
+      if (objTrigger && !estado.objecionActiva) {
+        objTrigger.disparada = true;
+        estado.objecionesTotales++;
+        estado.objecionActiva = objTrigger;
+        
+        setTimeout(() => {
+          addMessage('bot', objTrigger.texto);
+          hablarBot(objTrigger.texto);
+        }, 500);
+        return;
+      }
+
+      setTimeout(() => {
+        addMessage('bot', respuestaTexto);
+        hablarBot(respuestaTexto, () => {
+          evaluarProgresoFase();
+        });
+      }, 500);
+    }
+
+    function evaluarProgresoFase() {
+      const faseConfig = checklistFases.find(f => f.fase === estado.faseActual);
+      const marcadosEnFase = faseConfig.items.filter(i => estado.itemsCompletados.has(i.id)).length;
+      const pctFase = (marcadosEnFase / faseConfig.items.length) * 100;
+
+      if (pctFase >= 75 && !estado.objecionActiva) {
+        if (estado.faseActual < 4) {
+          estado.faseActual++;
+          renderChecklist();
+        } else {
+          setTimeout(finalizarSimulacion, 1000);
+        }
+      }
+    }
+
+    function renderChecklist() {
+      const faseConfig = checklistFases.find(f => f.fase === estado.faseActual);
+      document.getElementById('currentPhaseTitle').innerText = `Fase ${estado.faseActual}: ${faseConfig.titulo}`;
+
+      const marcadosEnFase = faseConfig.items.filter(i => estado.itemsCompletados.has(i.id)).length;
+      const pctFase = Math.round((marcadosEnFase / faseConfig.items.length) * 100);
+      document.getElementById('phaseProgress').innerText = `${pctFase}% Completado`;
+
+      const container = document.getElementById('checklistItems');
+      container.innerHTML = "";
+
+      faseConfig.items.forEach(item => {
+        const isDone = estado.itemsCompletados.has(item.id);
+        const div = document.createElement('div');
+        div.className = `chk-item ${isDone ? 'done' : ''}`;
+        div.innerHTML = `
+          <span class="chk-icon">${isDone ? '✅' : '⚪'}</span>
+          <span>${item.desc}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addMessage(role, text) {
+      const box = document.getElementById('chatBox');
+      const div = document.createElement('div');
+      div.className = `msg ${role}`;
+      div.innerText = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function finalizarSimulacion() {
+      detenerMicrofono();
+      document.getElementById('viewSim').classList.remove('active');
+      document.getElementById('viewResults').classList.add('active');
+
+      let totalItemsAll = 0;
+      checklistFases.forEach(f => totalItemsAll += f.items.length);
+      const totalMarcados = estado.itemsCompletados.size;
+      const avgPct = (totalMarcados / totalItemsAll) * 100;
+
+      const objPct = estado.objecionesTotales > 0 ? (estado.objecionesResueltas / estado.objecionesTotales) * 100 : 100;
+
+      let scoreFinal = Math.round((avgPct * 0.7) + (objPct * 0.3));
+      if (estado.penalizadoPrecio) scoreFinal = Math.max(0, scoreFinal - 10);
+
+      document.getElementById('scoreDisplay').innerText = scoreFinal;
+
+      let feedback = "";
+      if (scoreFinal >= 85) feedback = "¡Excelente desempeño! Dominas la argumentación oficial y la gestión de objeciones reales.";
+      else if (scoreFinal >= 70) feedback = "Buen trabajo. Cubres los puntos clave pero puedes mejorar en la resolución fluida de objeciones.";
+      else feedback = "Necesitas practicar más. Asegúrate de construir valor en la Fase de Servicio antes de hablar de precios.";
+
+      document.getElementById('scoreFeedback').innerText = feedback;
+
+      const breakdown = document.getElementById('scoreBreakdown');
+      breakdown.innerHTML = `
+        <li><strong>Ítems del checklist cubiertos:</strong> ${totalMarcados} de ${totalItemsAll} (${Math.round(avgPct)}%)</li>
+        <li><strong>Objeciones resueltas:</strong> ${estado.objecionesResueltas} de ${estado.objecionesTotales} (${Math.round(objPct)}%)</li>
+        <li><strong>Penalización por precio prematuro:</strong> ${estado.penalizadoPrecio ? '-10 puntos' : 'Ninguna (0 pts)'}</li>
+      `;
+
+      const historial = JSON.parse(localStorage.getItem('roleplay_history') || '[]');
+      historial.push({
+        fecha: new Date().toISOString(),
+        comercial: estado.comercial,
+        perfil: estado.perfilKey,
+        nivel: estado.nivelDificultad,
+        score: scoreFinal
+      });
+      localStorage.setItem('roleplay_history', JSON.stringify(historial));
+    }
+
+    function reiniciar() {
+      document.getElementById('viewResults').classList.remove('active');
+      document.getElementById('viewSetup').classList.remove('active');
+      document.getElementById('viewSetup').classList.add('active');
+      document.getElementById('chatBox').innerHTML = "";
+    }
+  </script>
+</body>
+</html>
