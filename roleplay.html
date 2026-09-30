@@ -1002,7 +1002,7 @@
           ? 'Vale, si ya está todo claro, lo dejamos hecho.'
           : 'Antes de firmar quiero tenerlo todo bien claro.';
       }
-      if (m.impaciencia >= 60) return 'Venga, vamos más rápido que tengo cosas que hacer.';
+      if (m.impaciencia >= 60 && estado.faseActual < 4) return 'Venga, vamos más rápido que tengo cosas que hacer.';
       return variar('neutra', ['Vale, dime.', 'Ajá.', 'Sigue, te escucho.']);
     }
 
