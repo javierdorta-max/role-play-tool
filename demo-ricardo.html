@@ -973,7 +973,7 @@
           ? 'Vale, si ya está todo claro, lo dejamos hecho.'
           : 'Antes de firmar quiero tenerlo todo bien claro.';
       }
-      if (m.impaciencia >= 60) return 'Venga, vamos más rápido que tengo cosas que hacer.';
+      if (m.impaciencia >= 60 && estado.faseActual < 4) return 'Venga, vamos más rápido que tengo cosas que hacer.';
       return variar('neutra', ['Vale, dime.', 'Ajá.', 'Sigue, te escucho.']);
     }
 
@@ -1331,7 +1331,8 @@
       "No te preocupes, te presento el Plan Ahorro Familiar, con descuento, por 36,90 con IVA, ¿vale?",
       "No tendrías ataduras de ningún tipo, se firma un acuerdo de 12 meses. ¿Por qué plan empezamos, el de cuatro o el de cinco?",
       "Para el cobro, puedes pagar con tarjeta, Bizum, o nos das tu cuenta o IBAN.",
-      "Y te activo el Aquamigo, un 10% de descuento si recomiendas a algún amigo, con un detalle de cortesía."
+      "Y te activo el Aquamigo, un 10% de descuento si recomiendas a algún amigo, con un detalle de cortesía.",
+      "Perfecto Ricardo, pues ya tengo todos tus datos. Muchas gracias por tu tiempo, que tengas muy buena tarde."
     ];
 
     function iniciarDemo() {
