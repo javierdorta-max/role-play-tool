@@ -1181,6 +1181,10 @@
     ];
 
     function iniciarDemo() {
+      try {
+        const unlock = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=");
+        unlock.play().then(() => unlock.pause()).catch(() => {});
+      } catch (e) {}
       iniciarSimulacion();
       let i = 0;
       function siguienteLinea() {
