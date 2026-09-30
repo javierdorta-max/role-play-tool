@@ -1320,15 +1320,15 @@
       "¿Compráis alguna marca en concreto, o la primera que pilláis en el súper?",
       "¿Cuántos sois en casa? Y la garrafa, ¿cuántos días os ha durado?",
       "¿Qué es lo que más le ha gustado de tener el dispensador en casa, qué tal la prueba en general?",
-      "Nosotros el reparto lo hacemos cada 28 días, directamente hasta la puerta de tu casa.",
-      "Antes quiero que veas la comodidad del servicio, no quiero que contrates algo sin saber bien lo que incluye.",
-      "Disponemos de un servicio de urgencia de 24 a 48 horas, para que nunca te quedes sin agua.",
-      "El dispensador tiene garantía de por vida, no ocupa espacio en tu cocina.",
-      "Los envases son de policarbonato, grado alimentario, y recogemos los envases vacíos para no generar residuos de plástico.",
-      "Además tienes la aplicación móvil para autogestionar todo el servicio cuando quieras.",
-      "Y si lo dejamos hecho ahora, te elimino la fianza de los 79 euros del dispensador, no pagarías depósito.",
-      "El servicio son 15 euros al mes más diez euros la botella, en tu caso unos 45 euros al mes en total.",
-      "No te preocupes, te presento el Plan Ahorro Familiar, con descuento, por 36,90 con IVA.",
+      "Nosotros el reparto lo hacemos cada 28 días, directamente hasta la puerta de tu casa, ¿vale?",
+      "Antes quiero que veas la comodidad del servicio, ¿de acuerdo? No quiero que contrates algo sin saber bien lo que incluye.",
+      "Disponemos de un servicio de urgencia de 24 a 48 horas, para que nunca te quedes sin agua, ¿te parece?",
+      "El dispensador tiene garantía de por vida, no ocupa espacio en tu cocina, ¿qué te parece?",
+      "Los envases son de policarbonato, grado alimentario, y recogemos los envases vacíos, ¿vale?",
+      "Además tienes la aplicación móvil para autogestionar todo el servicio cuando quieras, ¿de acuerdo?",
+      "Y si lo dejamos hecho ahora, te elimino la fianza de los 79 euros del dispensador, ¿te parece bien?",
+      "El servicio son 15 euros al mes más diez euros la botella, en tu caso unos 45 euros al mes, ¿qué te parece?",
+      "No te preocupes, te presento el Plan Ahorro Familiar, con descuento, por 36,90 con IVA, ¿vale?",
       "No tendrías ataduras de ningún tipo, se firma un acuerdo de 12 meses. ¿Por qué plan empezamos, el de cuatro o el de cinco?",
       "Para el cobro, puedes pagar con tarjeta, Bizum, o nos das tu cuenta o IBAN.",
       "Y te activo el Aquamigo, un 10% de descuento si recomiendas a algún amigo, con un detalle de cortesía."
@@ -1340,9 +1340,19 @@
         unlock.play().then(() => unlock.pause()).catch(() => {});
       } catch (e) {}
       iniciarSimulacion();
+      const finalizarReal = finalizarSimulacion;
+      finalizarSimulacion = function(){};
       let i = 0;
       function siguienteLinea() {
-        if (i >= GUION_DEMO.length) return;
+        if (i >= GUION_DEMO.length) {
+          const esperar = () => {
+            if (estado.botHablando) { setTimeout(esperar, 300); return; }
+            finalizarSimulacion = finalizarReal;
+            finalizarSimulacion();
+          };
+          setTimeout(esperar, 300);
+          return;
+        }
         if (estado.botHablando || !sesionActiva) { setTimeout(siguienteLinea, 300); return; }
         setTimeout(() => {
           if (!sesionActiva) return;
