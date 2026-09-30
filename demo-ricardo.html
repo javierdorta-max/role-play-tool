@@ -1110,8 +1110,14 @@
         const respuesta = responderRicardo(texto);
         estado.ultimaRespuestaBot = respuesta;
         renderChecklist();
-        addMessage('bot', respuesta);
-        hablarBot(respuesta, evaluarProgresoFase);
+        {
+          const sesion = sesionActual;
+          setTimeout(() => {
+            if (!sesionActiva || sesion !== sesionActual) return;
+            addMessage('bot', respuesta);
+            hablarBot(respuesta, evaluarProgresoFase);
+          }, 500);
+        }
         return;
       }
 
