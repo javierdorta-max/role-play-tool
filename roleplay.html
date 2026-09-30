@@ -231,6 +231,7 @@
         <div>
           <label for="selectPerfil">Perfil de Cliente (14 Casos Reales):</label>
           <select id="selectPerfil">
+            <option value="ricardo">Ricardo Argüello (Familia de 4, pide precio pronto, dice "caro")</option>
             <option value="enrique">Enrique (Nietos liados, compara con garrafas 8L del súper)</option>
             <option value="elizabeth">Elizabeth y Zacarías (Dolores rodilla/mano, exigen salud/policarbonato)</option>
             <option value="francisca">Francisca (Jubilada, asustada por los 79€ de fianza)</option>
@@ -392,6 +393,14 @@
     };
 
     const perfilesConfig = {
+      ricardo: {
+        nombre: "Ricardo Argüello",
+        saludo: "¿Diga? ¿Quién es?",
+        objeciones: [
+          { fase: 3, triggerItem: "logistica", texto: "Perdona pero yo lo que quiero ya es que me digas los precios, porque a eso voy.", resolvedBy: ["antes quiero", "comodidad", "un momento", "despues", "primero", "ahora te cuento", "acarrear"] },
+          { fase: 4, triggerItem: "elimina_cuota", texto: "Caro, muy caro.", resolvedBy: ["promocion", "plan ahorro", "descuento", "no te preocupes", "plan familiar"] }
+        ]
+      },
       enrique: {
         nombre: "Enrique",
         saludo: "Mmm... Hola, buenas tardes. Pasa, pasa... perdona que estoy aquí con los nietos liados.",
@@ -629,7 +638,9 @@
           if (vigente() && !estado.escuchando) iniciarMicrofono();
         }, 500);
       };
-      const clipUrl = estado.perfilKey === 'elizabeth' ? audioElizabeth[texto] : null;
+      const clipUrl = estado.perfilKey === 'elizabeth' ? audioElizabeth[texto]
+        : estado.perfilKey === 'ricardo' ? audioRicardo[texto]
+        : null;
       if (clipUrl) {
         estado.botHablando = true;
         aviso.textContent = 'Voz real (ElevenLabs)';
@@ -762,6 +773,34 @@
       return variar('neutra', ['Te escucho, cuéntame.', 'Vale, ¿qué necesitas saber?', 'Ajá, sigue.']);
     }
 
+    const audioRicardo = {
+      "¿Diga? ¿Quién es?": "voces/ricardo/saludo.mp3",
+      "Aquí mando yo, ¿vale?": "voces/ricardo/decisor_1.mp3",
+      "La decisión la tomo yo, no hay problema.": "voces/ricardo/decisor_2.mp3",
+      "La primera que pillamos en el súper, la más barata, la económica.": "voces/ricardo/carga_1.mp3",
+      "Compramos lo que sea más barato en el súper, sin fijarnos mucho.": "voces/ricardo/carga_2.mp3",
+      "El agua fresquita nos ha gustado, y hacer té con el agua caliente. Lo que no nos gusta es que los niños están todo el día detrás del grifo.": "voces/ricardo/beneficio_1.mp3",
+      "Lo mejor el agua bien fría, aunque los peques no paran de toquetear el grifo.": "voces/ricardo/beneficio_2.mp3",
+      "Somos cuatro en casa, la garrafa nos dura casi una semana.": "voces/ricardo/consumo_1.mp3",
+      "Cuatro en total, y ya casi se acaba la garrafa, le faltan dos deditos.": "voces/ricardo/consumo_2.mp3",
+      "Os conocía de veros por la tele, algún camión por la calle.": "voces/ricardo/marca_1.mp3",
+      "Sí, me sonabais de la tele y de ver camiones.": "voces/ricardo/marca_2.mp3",
+      "Ya, pero yo lo que quiero es que me digas cuánto es, en serio.": "voces/ricardo/pendiente_1.mp3",
+      "Vale, vale, pero sigo sin saber el precio.": "voces/ricardo/pendiente_2.mp3",
+      "Ah, vale, entonces sí, cuéntame el resto.": "voces/ricardo/ack_resuelto.mp3",
+      "Oye, que me estás liando con tanta explicación, ve al grano.": "voces/ricardo/impaciente_1.mp3",
+      "Perdona pero no sigo el hilo, resume un poco.": "voces/ricardo/impaciente_2.mp3",
+      "Vale, eso de no tener que acarrear sí que me convence, la verdad.": "voces/ricardo/construye_valor.mp3",
+      "Vale, si ya está todo claro, lo dejamos hecho.": "voces/ricardo/firmamos_con_valor.mp3",
+      "Antes de firmar quiero tenerlo todo bien claro.": "voces/ricardo/firmamos_sin_valor.mp3",
+      "Venga, vamos más rápido que tengo cosas que hacer.": "voces/ricardo/impaciencia_alta.mp3",
+      "Vale, dime.": "voces/ricardo/neutra_1.mp3",
+      "Ajá.": "voces/ricardo/neutra_2.mp3",
+      "Sigue, te escucho.": "voces/ricardo/neutra_3.mp3",
+      "Perdona pero yo lo que quiero ya es que me digas los precios, porque a eso voy.": "voces/ricardo/objecion_precio.mp3",
+      "Caro, muy caro.": "voces/ricardo/objecion_caro.mp3"
+    };
+
     const audioElizabeth = {
       "Hola... buenas tardes. Pase, pase... siéntese por aquí un momento.": "voces/elizabeth/saludo.mp3",
       "Sí, aquí decidimos entre los dos, mi marido y yo.": "voces/elizabeth/decisor_1.mp3",
@@ -877,6 +916,93 @@
       return variar('neutra', ['Sí, dígame, le escuchamos.', 'Vale, cuéntenos.', 'Ajá, siga.']);
     }
 
+    function crearMemoriaRicardo() {
+      return {
+        confianza: 50, receptividad: 50, impaciencia: 20,
+        estados: { decisor: false, beneficio: false, consumo: false, valorConfirmado: false },
+        descubiertos: {}, sinPreguntas: 0, variantes: {}
+      };
+    }
+
+    function responderRicardo(texto) {
+      const m = estado.ricardo;
+      const t = norm(texto);
+      const tiene = (...palabras) => palabras.some(p => t.includes(norm(p)));
+      const pregunta = /[¿?]/.test(texto) || /^(y )?(quien|que tal|que os|que les|cuant|como (os|se|lo|compr|funcion)|conocia|os ha|le ha|te compensa|le compensa)/.test(t);
+      const variar = (clave, opciones) => {
+        const n = m.variantes[clave] || 0;
+        m.variantes[clave] = n + 1;
+        return opciones[n % opciones.length];
+      };
+      const ajustar = (clave, cambio) => m[clave] = Math.max(0, Math.min(100, m[clave] + cambio));
+      m.sinPreguntas = pregunta ? 0 : m.sinPreguntas + 1;
+      if (pregunta) { ajustar('confianza', 3); ajustar('impaciencia', -5); }
+      const largo = t.split(' ').length > 85;
+      if (largo || m.sinPreguntas >= 3) { ajustar('impaciencia', 15); ajustar('receptividad', -5); }
+
+      const personalizado = m.descubiertos.carga && tiene('acarrear', 'comodidad', 'olvidas', 'reparto programado');
+      const servicio = tiene('acarrear', 'comodidad', 'reparto', 'olvidas', 'garrafas');
+      const construyeValor = personalizado && servicio;
+      if (construyeValor && !m.estados.valorConfirmado) {
+        m.estados.valorConfirmado = true;
+        ajustar('confianza', 10); ajustar('receptividad', 15);
+      }
+
+      if (estado.objecionActiva) {
+        if (matchesAny(t, estado.objecionActiva.resolvedBy)) {
+          estado.objecionesResueltas++;
+          estado.objecionActiva = null;
+          ajustar('confianza', 8); ajustar('receptividad', 10);
+          return 'Ah, vale, entonces sí, cuéntame el resto.';
+        }
+        return variar('pendiente', [
+          'Ya, pero yo lo que quiero es que me digas cuánto es, en serio.',
+          'Vale, vale, pero sigo sin saber el precio.'
+        ]);
+      }
+
+      if (pregunta && tiene('quien decide', 'decision', 'decisor', 'autoriz', 'titular', 'consultar', 'mando')) {
+        m.estados.decisor = true;
+        return variar('decisor', ['Aquí mando yo, ¿vale?', 'La decisión la tomo yo, no hay problema.']);
+      }
+      if (pregunta && tiene('quien trae', 'quien carga', 'quien compra', 'marca', 'super', 'comprais')) {
+        m.descubiertos.carga = true;
+        return variar('carga', ['La primera que pillamos en el súper, la más barata, la económica.', 'Compramos lo que sea más barato en el súper, sin fijarnos mucho.']);
+      }
+      if (pregunta && tiene('gustado', 'experiencia', 'que tal', 'prueba')) {
+        m.estados.beneficio = true;
+        return variar('beneficio', ['El agua fresquita nos ha gustado, y hacer té con el agua caliente. Lo que no nos gusta es que los niños están todo el día detrás del grifo.', 'Lo mejor el agua bien fría, aunque los peques no paran de toquetear el grifo.']);
+      }
+      if (pregunta && !tiene('precio', 'euros') && tiene('cuanto', 'consumo', 'durado', 'cuantas', 'personas', 'cuantos')) {
+        m.estados.consumo = true;
+        return variar('consumo', ['Somos cuatro en casa, la garrafa nos dura casi una semana.', 'Cuatro en total, y ya casi se acaba la garrafa, le faltan dos deditos.']);
+      }
+      if (pregunta && tiene('conocia', 'conoce', 'marca', 'oido', 'camion', 'tele')) {
+        m.descubiertos.marca = true;
+        return variar('marca', ['Os conocía de veros por la tele, algún camión por la calle.', 'Sí, me sonabais de la tele y de ver camiones.']);
+      }
+
+      const investigaCompra = pregunta && tiene('comprab', 'compran', 'compras', 'super', 'garrafas', 'organizab', 'antes');
+      if (investigaCompra && !m.descubiertos.carga) {
+        m.descubiertos.carga = true;
+        return variar('carga', ['La primera que pillamos en el súper, la más barata, la económica.', 'Compramos lo que sea más barato en el súper, sin fijarnos mucho.']);
+      }
+
+      if (largo || m.sinPreguntas >= 3) {
+        return variar('impaciente', ['Oye, que me estás liando con tanta explicación, ve al grano.', 'Perdona pero no sigo el hilo, resume un poco.']);
+      }
+      if (construyeValor) {
+        return 'Vale, eso de no tener que acarrear sí que me convence, la verdad.';
+      }
+      if (tiene('firmamos', 'activamos', 'contratamos', 'lo dejamos hecho', 'cerramos')) {
+        return m.estados.valorConfirmado
+          ? 'Vale, si ya está todo claro, lo dejamos hecho.'
+          : 'Antes de firmar quiero tenerlo todo bien claro.';
+      }
+      if (m.impaciencia >= 60) return 'Venga, vamos más rápido que tengo cosas que hacer.';
+      return variar('neutra', ['Vale, dime.', 'Ajá.', 'Sigue, te escucho.']);
+    }
+
     function iniciarSimulacion() {
       const nombre = document.getElementById('inputName').value.trim();
       if (!nombre) { alert("Por favor, introduce tu nombre."); return; }
@@ -898,6 +1024,7 @@
       estado.objecionActiva = null;
       estado.enrique = estado.perfilKey === 'enrique' ? crearMemoriaEnrique() : null;
       estado.elizabeth = estado.perfilKey === 'elizabeth' ? crearMemoriaElizabeth() : null;
+      estado.ricardo = estado.perfilKey === 'ricardo' ? crearMemoriaRicardo() : null;
       estado.objeciones = perfilesConfig[estado.perfilKey].objeciones.map(o => ({...o, disparada: false}));
       document.getElementById('penaltyNotice').style.display = 'none';
 
@@ -979,6 +1106,34 @@
           return;
         }
         const respuesta = responderElizabeth(texto);
+        estado.ultimaRespuestaBot = respuesta;
+        renderChecklist();
+        addMessage('bot', respuesta);
+        hablarBot(respuesta, evaluarProgresoFase);
+        return;
+      }
+
+      if (estado.perfilKey === 'ricardo') {
+        const fase = checklistFases.find(f => f.fase === estado.faseActual);
+        fase.items.forEach(item => {
+          if (matchesAny(textNorm, item.keywords)) estado.itemsCompletados.add(item.id);
+        });
+        const perfilObjeciones = estado.objeciones;
+        const objTrigger = perfilObjeciones.find(o => o.fase === estado.faseActual && !o.disparada && estado.itemsCompletados.has(o.triggerItem));
+        if (objTrigger && !estado.objecionActiva) {
+          objTrigger.disparada = true;
+          estado.objecionesTotales++;
+          estado.objecionActiva = objTrigger;
+          renderChecklist();
+          const sesion = sesionActual;
+          setTimeout(() => {
+            if (!sesionActiva || sesion !== sesionActual) return;
+            addMessage('bot', objTrigger.texto);
+            hablarBot(objTrigger.texto);
+          }, 500);
+          return;
+        }
+        const respuesta = responderRicardo(texto);
         estado.ultimaRespuestaBot = respuesta;
         renderChecklist();
         addMessage('bot', respuesta);
