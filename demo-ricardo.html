@@ -598,9 +598,11 @@
       let terminado = false;
       const aviso = document.getElementById('audioStatus');
       const vigente = () => turno === turnoVoz && sesion === sesionActual && sesionActiva;
+      let watchdog = null;
       const terminar = (mensaje = '') => {
         if (terminado || !vigente()) return;
         terminado = true;
+        clearTimeout(watchdog);
         estado.botHablando = false;
         audioCliente = null;
         aviso.textContent = mensaje;
@@ -609,6 +611,7 @@
           if (vigente() && !estado.escuchando) iniciarMicrofono();
         }, 500);
       };
+      watchdog = setTimeout(() => terminar('Tiempo de espera agotado, continuamos.'), 8000);
       const clipUrl = estado.perfilKey === 'elizabeth' ? audioElizabeth[texto]
         : estado.perfilKey === 'ricardo' ? audioRicardo[texto]
         : null;
@@ -1302,25 +1305,24 @@
     }
 
     const GUION_DEMO = [
-      "Hola, buenas tardes, soy de Aquaservice, le llamaba por la prueba que está disfrutando estos días.",
-      "¿Es usted quien decide en casa, o lo comparte con su esposa?",
-      "¿Ya nos conocía, nos había visto el camión por la calle?",
-      "¿Cómo se organizaban antes, compraban en el súper la marca más barata?",
-      "¿Cuántas personas sois en casa, y cuántos días os ha durado la garrafa?",
-      "¿Qué es lo que más le ha gustado de la prueba, el agua fresquita?",
-      "Le cuento cómo funciona el reparto programado cada 28 días, directamente hasta la puerta de casa.",
-      "Antes quiero que vea la comodidad, así se olvida de acarrear con las garrafas usted mismo.",
-      "Además tiene entregas urgentes gratuitas en menos de 48 horas si le hiciera falta.",
-      "El dispensador tiene garantía de por vida y es de policarbonato, sin ocupar espacio.",
-      "Es un sistema sostenible, reciclamos las garrafas para no generar residuos de plástico.",
-      "Y desde la aplicación del móvil puede autogestionar el servicio cuando quiera.",
-      "Le elimino la fianza de los 79 euros del dispensador, se queda en cero.",
-      "También le quito la cuota de servicio de los 15 euros, sale gratis.",
-      "No se preocupe, le presento el plan ahorro familiar con descuento incluido.",
-      "Le dejo el plan a 33,90 al mes, con botellines incluidos.",
-      "La permanencia son solo seis meses, sin ataduras.",
-      "Para el cobro, tarjeta, Bizum, o me da su cuenta o IBAN.",
-      "Y le activo el Aquamigo, un 10% de descuento si recomienda a algún amigo, con un detalle de cortesía de regalo."
+      "Muy buenas tardes, le llamaba de Aquaservice en relación a la prueba de agua, ¿qué tal la está disfrutando en casa estos días?",
+      "¿Fue usted el que autorizó la prueba? Entiendo que es usted quien toma la decisión en casa.",
+      "Lo primero, ¿nos conocíais? ¿Nos habíais visto por la tele o algún camión por la calle?",
+      "¿Compráis alguna marca en concreto, o la primera que pilláis en el súper?",
+      "¿Cuántos sois en casa? Y la garrafa, ¿cuántos días os ha durado?",
+      "¿Qué es lo que más le ha gustado de tener el dispensador en casa, qué tal la prueba en general?",
+      "Nosotros el reparto lo hacemos cada 28 días, directamente hasta la puerta de tu casa.",
+      "Antes quiero que veas la comodidad del servicio, no quiero que contrates algo sin saber bien lo que incluye.",
+      "Disponemos de un servicio de urgencia de 24 a 48 horas, para que nunca te quedes sin agua.",
+      "El dispensador tiene garantía de por vida, no ocupa espacio en tu cocina.",
+      "Los envases son de policarbonato, grado alimentario, y recogemos los envases vacíos para no generar residuos de plástico.",
+      "Además tienes la aplicación móvil para autogestionar todo el servicio cuando quieras.",
+      "Y si lo dejamos hecho ahora, te elimino la fianza de los 79 euros del dispensador, no pagarías depósito.",
+      "El servicio son 15 euros al mes más 10 euros la botella, en tu caso unos 45 euros al mes en total.",
+      "No te preocupes, te presento el Plan Ahorro Familiar, con descuento, por 36,90 con IVA.",
+      "No tendrías ataduras de ningún tipo, se firma un acuerdo de 12 meses.",
+      "Para el cobro, puedes pagar con tarjeta, Bizum, o nos das tu cuenta o IBAN.",
+      "Y te activo el Aquamigo, un 10% de descuento si recomiendas a algún amigo, con un detalle de cortesía."
     ];
 
     function iniciarDemo() {
