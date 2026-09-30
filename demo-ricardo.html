@@ -1070,6 +1070,7 @@
           objTrigger.disparada = true;
           estado.objecionesTotales++;
           estado.objecionActiva = objTrigger;
+          estado.botHablando = true;
           renderChecklist();
           const sesion = sesionActual;
           setTimeout(() => {
@@ -1098,6 +1099,7 @@
           objTrigger.disparada = true;
           estado.objecionesTotales++;
           estado.objecionActiva = objTrigger;
+          estado.botHablando = true;
           renderChecklist();
           const sesion = sesionActual;
           setTimeout(() => {
@@ -1110,6 +1112,7 @@
         const respuesta = responderRicardo(texto);
         estado.ultimaRespuestaBot = respuesta;
         renderChecklist();
+        estado.botHablando = true;
         {
           const sesion = sesionActual;
           setTimeout(() => {
@@ -1337,9 +1340,12 @@
       function siguienteLinea() {
         if (i >= GUION_DEMO.length) return;
         if (estado.botHablando || !sesionActiva) { setTimeout(siguienteLinea, 300); return; }
-        procesarEntradaUsuario(GUION_DEMO[i]);
-        i++;
-        setTimeout(siguienteLinea, 1200);
+        setTimeout(() => {
+          if (!sesionActiva) return;
+          procesarEntradaUsuario(GUION_DEMO[i]);
+          i++;
+          setTimeout(siguienteLinea, 1200);
+        }, 500);
       }
       setTimeout(siguienteLinea, 1500);
     }
