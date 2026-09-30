@@ -742,6 +742,93 @@
       return variar('neutra', ['Te escucho, cuéntame.', 'Vale, ¿qué necesitas saber?', 'Ajá, sigue.']);
     }
 
+    function crearMemoriaElizabeth() {
+      return {
+        confianza: 50, receptividad: 50, impaciencia: 20,
+        estados: { decisor: false, beneficio: false, consumo: false, valorConfirmado: false },
+        descubiertos: {}, sinPreguntas: 0, variantes: {}
+      };
+    }
+
+    function responderElizabeth(texto) {
+      const m = estado.elizabeth;
+      const t = norm(texto);
+      const tiene = (...palabras) => palabras.some(p => t.includes(norm(p)));
+      const pregunta = /[¿?]/.test(texto) || /^(y )?(quien|que tal|que os|que les|cuant|como (os|se|lo|compr|funcion)|conocia|os ha|le ha|te compensa|le compensa)/.test(t);
+      const variar = (clave, opciones) => {
+        const n = m.variantes[clave] || 0;
+        m.variantes[clave] = n + 1;
+        return opciones[n % opciones.length];
+      };
+      const ajustar = (clave, cambio) => m[clave] = Math.max(0, Math.min(100, m[clave] + cambio));
+      m.sinPreguntas = pregunta ? 0 : m.sinPreguntas + 1;
+      if (pregunta) { ajustar('confianza', 3); ajustar('impaciencia', -5); }
+      const largo = t.split(' ').length > 85;
+      if (largo || m.sinPreguntas >= 3) { ajustar('impaciencia', 15); ajustar('receptividad', -5); }
+
+      const personalizado = m.descubiertos.carga && tiene('puerta', 'llevamos', 'suben', 'cero esfuerzo', 'sin esfuerzo');
+      const servicio = tiene('puerta', 'llevamos', 'reparto', 'comodidad', 'suben', 'ajustar');
+      const construyeValor = personalizado && servicio;
+      if (construyeValor && !m.estados.valorConfirmado) {
+        m.estados.valorConfirmado = true;
+        ajustar('confianza', 10); ajustar('receptividad', 15);
+      }
+
+      if (estado.objecionActiva) {
+        if (matchesAny(t, estado.objecionActiva.resolvedBy)) {
+          estado.objecionesResueltas++;
+          estado.objecionActiva = null;
+          ajustar('confianza', 8); ajustar('receptividad', 10);
+          return 'Ah, bueno... mmm... pues visto así de esa manera tiene usted toda la razón. Siga contándome.';
+        }
+        return variar('pendiente', [
+          'Ya, pero sigo con la duda, ¿eh? No me quedo tranquila del todo.',
+          'Mmm, no sé, siga explicándome que no me convence aún.'
+        ]);
+      }
+
+      if (pregunta && tiene('quien decide', 'decision', 'decisor', 'autoriz', 'titular', 'consultar')) {
+        m.estados.decisor = true;
+        return variar('decisor', ['Sí, aquí decidimos entre los dos, mi marido y yo.', 'Como le digo, lo decidimos juntos, entre Zacarías y yo.']);
+      }
+      if (pregunta && tiene('quien trae', 'quien carga', 'quien compra', 'quien os trae', 'quien lleva', 'quien os lleva', 'como se organizaban', 'como comprabais')) {
+        m.descubiertos.carga = true;
+        return variar('carga', ['Hasta ahora las traía nuestro hijo, pero no siempre puede, y a nosotros nos cuesta mucho con la rodilla y la mano.', 'Las cargaba nuestro hijo cuando podía, porque entre mi rodilla y su mano lo pasamos mal con el peso.']);
+      }
+      if (pregunta && tiene('gustado', 'experiencia', 'que tal', 'prueba')) {
+        m.estados.beneficio = true;
+        return variar('beneficio', ['Lo que más agradecemos es no tener que cargar nada, con nuestros dolores es un alivio.', 'Sobre todo el alivio de no acarrear peso, que entre los dos ya no podemos con las garrafas.']);
+      }
+      if (pregunta && !tiene('microplastico', 'plastico') && tiene('cuanto', 'consumo', 'durado', 'cuantas', 'personas', 'cuantos')) {
+        m.estados.consumo = true;
+        return variar('consumo', ['Pues entre los dos, la botella nos ha durado casi dos semanas.', 'Somos solo nosotros dos, así que no gastamos mucho, la verdad.']);
+      }
+      if (pregunta && tiene('conocia', 'conoce', 'marca', 'oido', 'camion')) {
+        m.descubiertos.marca = true;
+        return variar('marca', ['Sí, algo habíamos visto, un camión por el barrio.', 'Nos sonaba de verlo por la zona, sí.']);
+      }
+
+      const investigaCompra = pregunta && tiene('comprab', 'compran', 'compras', 'super', 'garrafas', 'organizab', 'antes');
+      if (investigaCompra && !m.descubiertos.carga) {
+        m.descubiertos.carga = true;
+        return variar('carga', ['Hasta ahora las traía nuestro hijo, pero no siempre puede, y a nosotros nos cuesta mucho con la rodilla y la mano.', 'Las cargaba nuestro hijo cuando podía, porque entre mi rodilla y su mano lo pasamos mal con el peso.']);
+      }
+
+      if (largo || m.sinPreguntas >= 3) {
+        return variar('impaciente', ['Espere, espere, que se me hace un lío con tantas cosas... vaya despacio, por favor.', 'Perdone, es que entre los dos nos perdemos un poco. Cuénteme más despacio.']);
+      }
+      if (construyeValor) {
+        return 'Eso sí que nos alivia, que nos lo suban ustedes hasta la puerta. Para nosotros el problema siempre ha sido cargar, no el agua en sí.';
+      }
+      if (tiene('firmamos', 'activamos', 'contratamos', 'lo dejamos hecho', 'cerramos')) {
+        return m.estados.valorConfirmado
+          ? 'De acuerdo, repasemos entre los dos las condiciones antes de dejarlo hecho.'
+          : 'Antes de decidir queremos tener claro que esto nos alivia de verdad y no nos vamos a complicar.';
+      }
+      if (m.impaciencia >= 60) return 'Vamos poco a poco, por favor, que no estamos para prisas.';
+      return variar('neutra', ['Sí, dígame, le escuchamos.', 'Vale, cuéntenos.', 'Ajá, siga.']);
+    }
+
     function iniciarSimulacion() {
       const nombre = document.getElementById('inputName').value.trim();
       if (!nombre) { alert("Por favor, introduce tu nombre."); return; }
@@ -762,6 +849,7 @@
       estado.penalizadoPrecio = false;
       estado.objecionActiva = null;
       estado.enrique = estado.perfilKey === 'enrique' ? crearMemoriaEnrique() : null;
+      estado.elizabeth = estado.perfilKey === 'elizabeth' ? crearMemoriaElizabeth() : null;
       estado.objeciones = perfilesConfig[estado.perfilKey].objeciones.map(o => ({...o, disparada: false}));
       document.getElementById('penaltyNotice').style.display = 'none';
 
@@ -815,6 +903,34 @@
           if (matchesAny(textNorm, item.keywords)) estado.itemsCompletados.add(item.id);
         });
         const respuesta = responderEnrique(texto);
+        estado.ultimaRespuestaBot = respuesta;
+        renderChecklist();
+        addMessage('bot', respuesta);
+        hablarBot(respuesta, evaluarProgresoFase);
+        return;
+      }
+
+      if (estado.perfilKey === 'elizabeth') {
+        const fase = checklistFases.find(f => f.fase === estado.faseActual);
+        fase.items.forEach(item => {
+          if (matchesAny(textNorm, item.keywords)) estado.itemsCompletados.add(item.id);
+        });
+        const perfilObjeciones = estado.objeciones;
+        const objTrigger = perfilObjeciones.find(o => o.fase === estado.faseActual && !o.disparada && estado.itemsCompletados.has(o.triggerItem));
+        if (objTrigger && !estado.objecionActiva) {
+          objTrigger.disparada = true;
+          estado.objecionesTotales++;
+          estado.objecionActiva = objTrigger;
+          renderChecklist();
+          const sesion = sesionActual;
+          setTimeout(() => {
+            if (!sesionActiva || sesion !== sesionActual) return;
+            addMessage('bot', objTrigger.texto);
+            hablarBot(objTrigger.texto);
+          }, 500);
+          return;
+        }
+        const respuesta = responderElizabeth(texto);
         estado.ultimaRespuestaBot = respuesta;
         renderChecklist();
         addMessage('bot', respuesta);
