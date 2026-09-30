@@ -595,10 +595,18 @@
     let sesionActual = 0;
     let sesionActiva = false;
 
+    let audioCliente = null;
+
     function cancelarVoz() {
       turnoVoz++;
       clearTimeout(timerMicrofono);
       detenerMicrofono();
+      if (audioCliente) {
+        audioCliente.onended = null;
+        audioCliente.onerror = null;
+        audioCliente.pause();
+        audioCliente = null;
+      }
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       estado.botHablando = false;
     }
@@ -614,12 +622,24 @@
         if (terminado || !vigente()) return;
         terminado = true;
         estado.botHablando = false;
+        audioCliente = null;
         aviso.textContent = mensaje;
         if (callback) callback();
         if (vigente()) timerMicrofono = setTimeout(() => {
           if (vigente() && !estado.escuchando) iniciarMicrofono();
         }, 500);
       };
+      const clipUrl = estado.perfilKey === 'elizabeth' ? audioElizabeth[texto] : null;
+      if (clipUrl) {
+        estado.botHablando = true;
+        aviso.textContent = 'Voz real (ElevenLabs)';
+        const audio = new Audio(clipUrl);
+        audioCliente = audio;
+        audio.onended = () => terminar('Voz real · ElevenLabs');
+        audio.onerror = () => terminar('No se pudo reproducir el audio. Puedes continuar por texto.');
+        audio.play().catch(() => terminar('El navegador no ha permitido el audio. Puedes continuar por texto.'));
+        return;
+      }
       if (!('speechSynthesis' in window)) {
         terminar('Voz no disponible en este navegador. Puedes continuar por texto.');
         return;
@@ -741,6 +761,34 @@
       if (m.impaciencia >= 60) return 'Vamos poco a poco, por favor. ¿Qué necesitas saber de nosotros?';
       return variar('neutra', ['Te escucho, cuéntame.', 'Vale, ¿qué necesitas saber?', 'Ajá, sigue.']);
     }
+
+    const audioElizabeth = {
+      "Hola... buenas tardes. Pase, pase... siéntese por aquí un momento.": "voces/elizabeth/saludo.mp3",
+      "Sí, aquí decidimos entre los dos, mi marido y yo.": "voces/elizabeth/decisor_1.mp3",
+      "Como le digo, lo decidimos juntos, entre Zacarías y yo.": "voces/elizabeth/decisor_2.mp3",
+      "Hasta ahora las traía nuestro hijo, pero no siempre puede, y a nosotros nos cuesta mucho con la rodilla y la mano.": "voces/elizabeth/carga_1.mp3",
+      "Las cargaba nuestro hijo cuando podía, porque entre mi rodilla y su mano lo pasamos mal con el peso.": "voces/elizabeth/carga_2.mp3",
+      "Lo que más agradecemos es no tener que cargar nada, con nuestros dolores es un alivio.": "voces/elizabeth/beneficio_1.mp3",
+      "Sobre todo el alivio de no acarrear peso, que entre los dos ya no podemos con las garrafas.": "voces/elizabeth/beneficio_2.mp3",
+      "Pues entre los dos, la botella nos ha durado casi dos semanas.": "voces/elizabeth/consumo_1.mp3",
+      "Somos solo nosotros dos, así que no gastamos mucho, la verdad.": "voces/elizabeth/consumo_2.mp3",
+      "Sí, algo habíamos visto, un camión por el barrio.": "voces/elizabeth/marca_1.mp3",
+      "Nos sonaba de verlo por la zona, sí.": "voces/elizabeth/marca_2.mp3",
+      "Ya, pero sigo con la duda, ¿eh? No me quedo tranquila del todo.": "voces/elizabeth/pendiente_1.mp3",
+      "Mmm, no sé, siga explicándome que no me convence aún.": "voces/elizabeth/pendiente_2.mp3",
+      "Ah, bueno... mmm... pues visto así de esa manera tiene usted toda la razón. Siga contándome.": "voces/elizabeth/ack_resuelto.mp3",
+      "Espere, espere, que se me hace un lío con tantas cosas... vaya despacio, por favor.": "voces/elizabeth/impaciente_1.mp3",
+      "Perdone, es que entre los dos nos perdemos un poco. Cuénteme más despacio.": "voces/elizabeth/impaciente_2.mp3",
+      "Eso sí que nos alivia, que nos lo suban ustedes hasta la puerta. Para nosotros el problema siempre ha sido cargar, no el agua en sí.": "voces/elizabeth/construye_valor.mp3",
+      "De acuerdo, repasemos entre los dos las condiciones antes de dejarlo hecho.": "voces/elizabeth/firmamos_con_valor.mp3",
+      "Antes de decidir queremos tener claro que esto nos alivia de verdad y no nos vamos a complicar.": "voces/elizabeth/firmamos_sin_valor.mp3",
+      "Vamos poco a poco, por favor, que no estamos para prisas.": "voces/elizabeth/impaciencia_alta.mp3",
+      "Sí, dígame, le escuchamos.": "voces/elizabeth/neutra_1.mp3",
+      "Vale, cuéntenos.": "voces/elizabeth/neutra_2.mp3",
+      "Ajá, siga.": "voces/elizabeth/neutra_3.mp3",
+      "Eh... a ver, a nosotros lo que nos preocupa es que yo tengo un problema feo en la rodilla y él en la mano... y cargar garrafas del súper es un suplicio.": "voces/elizabeth/objecion_carga.mp3",
+      "Y... mmm... una pregunta técnica... ¿las garrafas estas no soltarán microplásticos con el calor como las de la calle?": "voces/elizabeth/objecion_microplasticos.mp3"
+    };
 
     function crearMemoriaElizabeth() {
       return {
