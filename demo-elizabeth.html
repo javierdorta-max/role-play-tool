@@ -590,9 +590,11 @@
       let terminado = false;
       const aviso = document.getElementById('audioStatus');
       const vigente = () => turno === turnoVoz && sesion === sesionActual && sesionActiva;
+      let watchdog = null;
       const terminar = (mensaje = '') => {
         if (terminado || !vigente()) return;
         terminado = true;
+        clearTimeout(watchdog);
         estado.botHablando = false;
         audioCliente = null;
         aviso.textContent = mensaje;
@@ -601,6 +603,7 @@
           if (vigente() && !estado.escuchando) iniciarMicrofono();
         }, 500);
       };
+      watchdog = setTimeout(() => terminar('Tiempo de espera agotado, continuamos.'), 8000);
       const clipUrl = estado.perfilKey === 'elizabeth' ? audioElizabeth[texto] : null;
       if (clipUrl) {
         estado.botHablando = true;
