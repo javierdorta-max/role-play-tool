@@ -1083,6 +1083,7 @@
         const respuesta = responderEnrique(texto);
         estado.ultimaRespuestaBot = respuesta;
         renderChecklist();
+        estado.botHablando = true;
         {
           const sesion = sesionActual;
           setTimeout(() => {
@@ -1105,6 +1106,7 @@
           objTrigger.disparada = true;
           estado.objecionesTotales++;
           estado.objecionActiva = objTrigger;
+          estado.botHablando = true;
           renderChecklist();
           const sesion = sesionActual;
           setTimeout(() => {
@@ -1117,6 +1119,7 @@
         const respuesta = responderElizabeth(texto);
         estado.ultimaRespuestaBot = respuesta;
         renderChecklist();
+        estado.botHablando = true;
         {
           const sesion = sesionActual;
           setTimeout(() => {
@@ -1139,6 +1142,7 @@
           objTrigger.disparada = true;
           estado.objecionesTotales++;
           estado.objecionActiva = objTrigger;
+          estado.botHablando = true;
           renderChecklist();
           const sesion = sesionActual;
           setTimeout(() => {
@@ -1151,6 +1155,7 @@
         const respuesta = responderRicardo(texto);
         estado.ultimaRespuestaBot = respuesta;
         renderChecklist();
+        estado.botHablando = true;
         {
           const sesion = sesionActual;
           setTimeout(() => {
